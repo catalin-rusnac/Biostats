@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-left: 200px;
+        }
+        .sliders-container {
+            display: flex;
+            justify-content: flex-start;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            align-self: flex-start;
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 5px;
+        }
+        label {
+            margin: 5px 0;
+            font-weight: bold;
+            text-align: center;
+            order: 2;
+        }
+        input[type="range"] {
+            appearance: slider-vertical;
+            -webkit-appearance: slider-vertical;
+            width: 30px;
+            height: 200px;
+            margin: 5px 0;
+            writing-mode: bt-lr;
+            -webkit-writing-mode: bt-lr;
+            order: 1;
+        }
+        .value-display {
+            display: block;
+            margin: 5px 0;
+            text-align: center;
+            font-weight: bold;
+            min-width: 40px;
+            order: 0;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+        }
+        .result p {
+            margin: 5px 0;
+        }
+        .chart-container {
+            margin-top: 20px;
+            height: 300px;
+        }
+        .data-table {
+            width: auto;
+            min-width: 200px;
+            border-collapse: collapse;
+            margin-top: 0;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            text-align: center;
+            background-color: white;
+        }
+        .data-table th {
+            background-color: #f2f2f2;
+        }
+        .formula {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+        }
+        .formula .description {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+        .formula p {
+            margin: 5px 0;
+        }
+        .formula .formula-display {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+        .main-content {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            width: 100%;
+        }
+        .top-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: flex-start;
+            margin-left: 0;
+        }
+        .summary-stats {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 200px;
+        }
+        .summary-stats p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Linear Regression</h1>
+        <div class="top-row">
+            <div class="sliders-container">
+                <div class="slider-container">
+                    <span class="value-display" id="value1">Y=5.0</span>
+                    <input type="range" min="0" max="10" value="5" step="0.1" class="slider" id="slider1">
+                    <label>X=1</label>
+                </div>
+                <div class="slider-container">
+                    <span class="value-display" id="value2">Y=5.0</span>
+                    <input type="range" min="0" max="10" value="5" step="0.1" class="slider" id="slider2">
+                    <label>X=2</label>
+                </div>
+                <div class="slider-container">
+                    <span class="value-display" id="value3">Y=5.0</span>
+                    <input type="range" min="0" max="10" value="5" step="0.1" class="slider" id="slider3">
+                    <label>X=3</label>
+                </div>
+                <div class="slider-container">
+                    <span class="value-display" id="value4">Y=5.0</span>
+                    <input type="range" min="0" max="10" value="5" step="0.1" class="slider" id="slider4">
+                    <label>X=4</label>
+                </div>
+                <div class="slider-container">
+                    <span class="value-display" id="value5">Y=5.0</span>
+                    <input type="range" min="0" max="10" value="5" step="0.1" class="slider" id="slider5">
+                    <label>X=5</label>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>X</th>
+                            <th>Y</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                    </tbody>
+                </table>
+                
+                <div class="summary-stats">
+                    <p>Mean of X: <span id="meanX">3.0</span></p>
+                    <p>Mean of Y: <span id="meanY">5.0</span></p>
+                    <p>Variance of X: <span id="varX">2.5</span></p>
+                    <p>Variance of Y: <span id="varY">0.0</span></p>
+                    <p>Covariance(X,Y): <span id="covXY">0.0</span></p>
+                    <p>Correlation(X,Y): <span id="corrXY">0.0</span></p>
+                    <p>Slope (b): <span id="slope">0.0</span></p>
+                    <p>Y-intercept (a): <span id="intercept">5.0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="scatterPlot"></canvas>
+        </div>
+
+        <div class="formula">
+            <h3>Mean</h3>
+            <p class="description">The mean (average) represents the central value of the Y data points. It's calculated by summing all values and dividing by the number of points.</p>
+            <p>Formula:</p>
+            <div class="formula-display">\(\bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i\)</div>
+            <p>Current calculation: \(\bar{y} = \frac{1}{5}\sum_{i=1}^{5} y_i = \frac{1}{5}(y_1 + y_2 + y_3 + y_4 + y_5)\)</p>
+            <p id="meanCalculation">\(\bar{y} = \frac{1}{5}(5 + 5 + 5 + 5 + 5) = 5\)</p>
+        </div>
+
+        <div class="formula">
+            <h3>Variance</h3>
+            <p class="description">Variance measures how far the Y values are spread out from their mean. A higher variance indicates that the data points are more dispersed.</p>
+            <p>Formula:</p>
+            <div class="formula-display">\(s^2_y = \frac{1}{n}\sum_{i=1}^{n} (y_i - \bar{y})^2\)</div>
+            <p>Current calculation: \(s^2_y = \frac{1}{5}\sum_{i=1}^{5} (y_i - \bar{y})^2\)</p>
+            <p id="varianceCalculation">\(s^2_y = \frac{1}{5}[(5-5)^2 + (5-5)^2 + (5-5)^2 + (5-5)^2 + (5-5)^2] = 0\)</p>
+        </div>
+
+        <div class="formula">
+            <h3>Covariance</h3>
+            <p class="description">Covariance shows how X and Y values change together. A positive covariance means they tend to increase together, while negative means they move in opposite directions.</p>
+            <p>Formula:</p>
+            <div class="formula-display">\(s_{xy} = \frac{1}{n}\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})\)</div>
+            <p>Current calculation: \(s_{xy} = \frac{1}{5}\sum_{i=1}^{5} (x_i - 3)(y_i - \bar{y})\)</p>
+            <p id="covarianceCalculation">\(s_{xy} = \frac{1}{5}[(1-3)(5-5) + (2-3)(5-5) + (3-3)(5-5) + (4-3)(5-5) + (5-3)(5-5)] = 0\)</p>
+        </div>
+
+        <div class="formula">
+            <h3>Correlation</h3>
+            <p class="description">Correlation measures the strength and direction of the linear relationship between X and Y. It ranges from -1 (perfect negative correlation) to 1 (perfect positive correlation).</p>
+            <p>Formula:</p>
+            <div class="formula-display">\(r_{xy} = \frac{s_{xy}}{s_x s_y}\)</div>
+            <p>Where:</p>
+            <ul>
+                <li>\(s_{xy}\) is the covariance between X and Y</li>
+                <li>\(s_x = \sqrt{s^2_x}\) is the standard deviation of X</li>
+                <li>\(s_y = \sqrt{s^2_y}\) is the standard deviation of Y</li>
+            </ul>
+            <p id="correlationCalculation">\(r_{xy} = \frac{0}{\sqrt{2.5} \times \sqrt{0}} = 0\)</p>
+        </div>
+
+        <div class="formula">
+            <h3>Linear Regression Fit</h3>
+            <p class="description">The regression line represents the best linear fit to the data points. The slope (b) shows how much Y changes for each unit change in X, while the intercept (a) is the Y value when X is zero.</p>
+            <p>Formula:</p>
+            <div class="formula-display">\(y = a + bx\)</div>
+            <p>Where:</p>
+            <ul>
+                <li>\(b = \frac{s_{xy}}{s^2_x}\) is the slope</li>
+                <li>\(a = \bar{y} - b\bar{x}\) is the y-intercept</li>
+            </ul>
+            <p id="regressionCalculation">\(y = 5 + 0x\)</p>
+            
+            <h4>Alternative Formula</h4>
+            <p class="description">This alternative formula can be more intuitive to understand:</p>
+            
+            <p>Slope using deviations from mean:</p>
+            <div class="formula-display">\(b = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum (x_i - \bar{x})^2}\)</div>
+            <p>This shows that the slope is the ratio of the sum of products of deviations to the sum of squared X deviations.</p>
+            <p>Current calculation:</p>
+            <p id="slopeDetailedCalculation">\(b = \frac{(1-3)(5-5) + (2-3)(5-5) + (3-3)(5-5) + (4-3)(5-5) + (5-3)(5-5)}{(1-3)^2 + (2-3)^2 + (3-3)^2 + (4-3)^2 + (5-3)^2} = \frac{(-2)(0) + (-1)(0) + (0)(0) + (1)(0) + (2)(0)}{4 + 1 + 0 + 1 + 4} = \frac{0}{10} = 0\)</p>
+        </div>
+
+        <div class="formula">
+            <h3>Residuals Analysis</h3>
+            <p class="description">Residuals are the differences between the actual Y values and the predicted Y values from the regression line. They help us understand how well the regression line fits the data.</p>
+            <p>Formula:</p>
+            <div class="formula-display">\(e_i = y_i - \hat{y}_i\)</div>
+            <p>Where:</p>
+            <ul>
+                <li>\(y_i\) is the actual Y value</li>
+                <li>\(\hat{y}_i = a + bx_i\) is the predicted Y value</li>
+                <li>\(e_i\) is the residual (error)</li>
+            </ul>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>X</th>
+                        <th>Actual Y</th>
+                        <th>Predicted Y</th>
+                        <th>Residual</th>
+                        <th>Squared Residual</th>
+                    </tr>
+                </thead>
+                <tbody id="residualsTableBody">
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" style="text-align: right;"><strong>Sum of Squared Residuals (SSR):</strong></td>
+                        <td><span id="ssr">0.00</span></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="formula">
+            <h3>Prediction for X=6</h3>
+            <p class="description">We can use our regression model to predict the Y value for X=6. The prediction includes both the point estimate and a confidence interval that accounts for the uncertainty in our prediction.</p>
+            <p>Point Prediction:</p>
+            <div class="formula-display">\(\hat{y}_6 = a + b \times 6\)</div>
+            <p>Current calculation:</p>
+            <p id="predictionCalculation">\(\hat{y}_6 = 0.00 + 0.00 \times 6 = 0.00\)</p>
+            
+            <p>95% Prediction Interval:</p>
+            <div class="formula-display">\(\hat{y}_6 \pm t_{\alpha/2, n-2} \times SEE \times \sqrt{1 + \frac{1}{n} + \frac{(6 - \bar{x})^2}{\sum(x_i - \bar{x})^2}}\)</div>
+            <p>Current calculation:</p>
+            <p id="predictionIntervalCalculation">\(0.00 \pm 3.182 \times 0.00 \times \sqrt{1 + \frac{1}{5} + \frac{(6 - 3.00)^2}{0.00}} = [0.00, 0.00]\)</p>
+        </div>
+
+        <div class="formula">
+            <h3>R-squared (Coefficient of Determination)</h3>
+            <p class="description">R-squared measures the proportion of the variance in the dependent variable that is predictable from the independent variable. It ranges from 0 to 1, where 1 indicates perfect prediction.</p>
+            <p>Formula:</p>
+            <div class="formula-display">\(R^2 = 1 - \frac{SSR}{SST}\)</div>
+            <p>Where:</p>
+            <ul>
+                <li>SSR is the Sum of Squared Residuals</li>
+                <li>SST is the Total Sum of Squares</li>
+            </ul>
+            <p>Current calculation:</p>
+            <p id="rSquaredCalculation">\(R^2 = 1 - \frac{0.00}{0.00} = 0.00\)</p>
+        </div>
+
+        <div class="formula">
+            <h3>Standard Error of the Estimate (SEE)</h3>
+            <p class="description">The Standard Error of the Estimate measures the typical distance that the observed values fall from the regression line. It represents the standard deviation of the residuals and provides a measure of the accuracy of predictions.</p>
+            <p>Formula:</p>
+            <div class="formula-display">\(SEE = \sqrt{\frac{SSR}{n-2}}\)</div>
+            <p>Where:</p>
+            <ul>
+                <li>SSR is the Sum of Squared Residuals</li>
+                <li>n is the number of observations</li>
+                <li>n-2 represents the degrees of freedom (2 parameters estimated: slope and intercept)</li>
+            </ul>
+            <p>Current calculation:</p>
+            <p id="seeCalculation">\(SEE = \sqrt{\frac{0.00}{3}} = 0.00\)</p>
+            <p class="description">A smaller SEE indicates that the observed values are closer to the regression line, suggesting better prediction accuracy.</p>
+        </div>
+
+        <div class="formula">
+            <h3>Hypothesis Testing for Regression</h3>
+            <p class="description">We can test whether the slope and intercept are significantly different from zero using t-tests. This helps determine if there is a statistically significant relationship between X and Y.</p>
+            
+            <h4>Test for Slope (b)</h4>
+            <p>Null Hypothesis: \(H_0: b = 0\) (no relationship between X and Y)</p>
+            <p>Alternative Hypothesis: \(H_1: b \neq 0\) (there is a relationship)</p>
+            <p>Standard Error of Slope:</p>
+            <div class="formula-display">\(SE_b = \frac{SEE}{\sqrt{\sum(x_i - \bar{x})^2}}\)</div>
+            <p>t-statistic:</p>
+            <div class="formula-display">\(t = \frac{b}{SE_b}\)</div>
+            <p>Current calculations:</p>
+            <p id="slopeTestCalculation">\(SE_b = \frac{0.00}{\sqrt{0.00}} = 0.00\)</p>
+            <p id="slopeTStatCalculation">\(t = \frac{0.00}{0.00} = 0.00\)</p>
+            
+            <h4>Test for Intercept (a)</h4>
+            <p>Null Hypothesis: \(H_0: a = 0\) (regression line passes through origin)</p>
+            <p>Alternative Hypothesis: \(H_1: a \neq 0\) (regression line does not pass through origin)</p>
+            <p>Standard Error of Intercept:</p>
+            <div class="formula-display">\(SE_a = SEE \sqrt{\frac{1}{n} + \frac{\bar{x}^2}{\sum(x_i - \bar{x})^2}}\)</div>
+            <p>t-statistic:</p>
+            <div class="formula-display">\(t = \frac{a}{SE_a}\)</div>
+            <p>Current calculations:</p>
+            <p id="interceptTestCalculation">\(SE_a = 0.00 \sqrt{\frac{1}{5} + \frac{0.00}{0.00}} = 0.00\)</p>
+            <p id="interceptTStatCalculation">\(t = \frac{0.00}{0.00} = 0.00\)</p>
+            
+            <p class="description">For both tests, we compare the t-statistic to critical values from the t-distribution with n-2 degrees of freedom. A large absolute t-value suggests rejecting the null hypothesis.</p>
+        </div>
+
+        <div class="formula">
+            <h3>Confidence Intervals</h3>
+            <p class="description">Confidence intervals provide a range of plausible values for the population parameters (slope and intercept) based on our sample data. A 95% confidence interval means we are 95% confident that the true population parameter lies within this range.</p>
+            
+            <h4>Confidence Interval for Slope (b)</h4>
+            <p>Formula:</p>
+            <div class="formula-display">\(b \pm t_{\alpha/2, n-2} \times SE_b\)</div>
+            <p>Where:</p>
+            <ul>
+                <li>\(t_{\alpha/2, n-2}\) is the critical value from the t-distribution</li>
+                <li>\(SE_b\) is the standard error of the slope</li>
+                <li>For 95% confidence, \(\alpha = 0.05\)</li>
+            </ul>
+            <p>Current calculation:</p>
+            <p id="slopeCICalculation">\(0.00 \pm 3.182 \times 0.00 = [0.00, 0.00]\)</p>
+            
+            <h4>Confidence Interval for Intercept (a)</h4>
+            <p>Formula:</p>
+            <div class="formula-display">\(a \pm t_{\alpha/2, n-2} \times SE_a\)</div>
+            <p>Where:</p>
+            <ul>
+                <li>\(t_{\alpha/2, n-2}\) is the critical value from the t-distribution</li>
+                <li>\(SE_a\) is the standard error of the intercept</li>
+                <li>For 95% confidence, \(\alpha = 0.05\)</li>
+            </ul>
+            <p>Current calculation:</p>
+            <p id="interceptCICalculation">\(0.00 \pm 3.182 \times 0.00 = [0.00, 0.00]\)</p>
+            
+            <p class="description">These intervals help us understand the precision of our estimates. A narrower interval indicates more precise estimates, while a wider interval suggests more uncertainty.</p>
+        </div>
+    </div>
+
+    <script>
+        let scatterChart = null;
+
+        function calculateStatistics(xValues, yValues) {
+            const n = xValues.length;
+            
+            // Calculate means
+            const meanX = xValues.reduce((a, b) => a + b, 0) / n;
+            const meanY = yValues.reduce((a, b) => a + b, 0) / n;
+            
+            // Calculate variances
+            const varX = xValues.reduce((sum, x) => sum + Math.pow(x - meanX, 2), 0) / n;
+            const varY = yValues.reduce((sum, y) => sum + Math.pow(y - meanY, 2), 0) / n;
+            
+            // Calculate covariance
+            const covXY = xValues.reduce((sum, x, i) => sum + (x - meanX) * (yValues[i] - meanY), 0) / n;
+            
+            // Calculate correlation
+            const corrXY = varY === 0 ? 0 : covXY / (Math.sqrt(varX) * Math.sqrt(varY));
+
+            // Calculate regression coefficients
+            const slope = varX === 0 ? 0 : covXY / varX;
+            const intercept = meanY - slope * meanX;
+
+            // Calculate residuals and SSR
+            const predictedY = xValues.map(x => intercept + slope * x);
+            const residuals = yValues.map((y, i) => y - predictedY[i]);
+            const squaredResiduals = residuals.map(r => r * r);
+            const ssr = squaredResiduals.reduce((sum, r) => sum + r, 0);
+
+            // Calculate SST and R-squared
+            const sst = yValues.reduce((sum, y) => sum + Math.pow(y - meanY, 2), 0);
+            const rSquared = sst === 0 ? 0 : 1 - (ssr / sst);
+            
+            // Calculate Standard Error of the Estimate
+            const see = Math.sqrt(ssr / (n - 2));
+            
+            // Calculate standard errors and t-statistics for hypothesis testing
+            const sumSquaredXDeviations = xValues.reduce((sum, x) => sum + Math.pow(x - meanX, 2), 0);
+            const seSlope = see / Math.sqrt(sumSquaredXDeviations);
+            const tSlope = slope / seSlope;
+            
+            const seIntercept = see * Math.sqrt(1/n + Math.pow(meanX, 2)/sumSquaredXDeviations);
+            const tIntercept = intercept / seIntercept;
+            
+            // Calculate critical t-value for 95% confidence (two-tailed)
+            const criticalT = 3.182; // For n-2 = 3 degrees of freedom
+            
+            // Calculate confidence intervals
+            const slopeCI = {
+                lower: slope - criticalT * seSlope,
+                upper: slope + criticalT * seSlope
+            };
+            
+            const interceptCI = {
+                lower: intercept - criticalT * seIntercept,
+                upper: intercept + criticalT * seIntercept
+            };
+            
+            // Calculate prediction for X=6
+            const x6 = 6;
+            const predictedY6 = intercept + slope * x6;
+            const sePred6 = see * Math.sqrt(1 + 1/n + Math.pow(x6 - meanX, 2)/sumSquaredXDeviations);
+            const predInterval6 = {
+                lower: predictedY6 - criticalT * sePred6,
+                upper: predictedY6 + criticalT * sePred6
+            };
+            
+            return {
+                meanX, meanY, varX, varY, covXY, corrXY, slope, intercept,
+                predictedY, residuals, squaredResiduals, ssr, sst, rSquared,
+                see,
+                seSlope,
+                tSlope,
+                seIntercept,
+                tIntercept,
+                slopeCI,
+                interceptCI,
+                predictedY6,
+                predInterval6
+            };
+        }
+
+        function updateValues() {
+            const xValues = [1, 2, 3, 4, 5];
+            const yValues = [];
+            
+            // Update table
+            const tableBody = document.getElementById('dataTableBody');
+            tableBody.innerHTML = '';
+            
+            for (let i = 1; i <= 5; i++) {
+                const value = parseFloat(document.getElementById(`slider${i}`).value);
+                document.getElementById(`value${i}`).textContent = `Y=${value.toFixed(1)}`;
+                yValues.push(value);
+                
+                // Add row to table
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = i;
+                row.insertCell(1).textContent = value.toFixed(1);
+            }
+
+            // Calculate statistics
+            const stats = calculateStatistics(xValues, yValues);
+            
+            // Update regression calculation display
+            const regressionCalc = `\\[y = ${stats.intercept.toFixed(2)} + ${stats.slope.toFixed(2)}x\\]`;
+            document.getElementById('regressionCalculation').innerHTML = regressionCalc;
+
+            // Update statistics display
+            document.getElementById('meanX').textContent = stats.meanX.toFixed(2);
+            document.getElementById('meanY').textContent = stats.meanY.toFixed(2);
+            document.getElementById('varX').textContent = stats.varX.toFixed(2);
+            document.getElementById('varY').textContent = stats.varY.toFixed(2);
+            document.getElementById('covXY').textContent = stats.covXY.toFixed(2);
+            document.getElementById('corrXY').textContent = stats.corrXY.toFixed(2);
+            document.getElementById('slope').textContent = stats.slope.toFixed(2);
+            document.getElementById('intercept').textContent = stats.intercept.toFixed(2);
+
+            // Update mean calculation display
+            const meanCalc = `\\[\\bar{y} = \\frac{1}{5}(${yValues.map(v => v.toFixed(1)).join(' + ')}) = ${stats.meanY.toFixed(2)}\\]`;
+            document.getElementById('meanCalculation').innerHTML = meanCalc;
+
+            // Update variance calculation display
+            const varianceTerms = yValues.map(y => `(${y.toFixed(1)}-${stats.meanY.toFixed(1)})^2`).join(' + ');
+            const varianceCalc = `\\[s^2_y = \\frac{1}{5}[${varianceTerms}] = ${stats.varY.toFixed(2)}\\]`;
+            document.getElementById('varianceCalculation').innerHTML = varianceCalc;
+
+            // Update covariance calculation display
+            const covarianceTerms = xValues.map((x, i) => 
+                `(${x}-${stats.meanX.toFixed(1)})(${yValues[i].toFixed(1)}-${stats.meanY.toFixed(1)})`
+            ).join(' + ');
+            const covarianceCalc = `\\[s_{xy} = \\frac{1}{5}[${covarianceTerms}] = ${stats.covXY.toFixed(2)}\\]`;
+            document.getElementById('covarianceCalculation').innerHTML = covarianceCalc;
+
+            // Update correlation calculation display
+            const correlationCalc = `\\[r_{xy} = \\frac{${stats.covXY.toFixed(2)}}{\\sqrt{${stats.varX.toFixed(2)}} \\times \\sqrt{${stats.varY.toFixed(2)}}} = ${stats.corrXY.toFixed(2)}\\]`;
+            document.getElementById('correlationCalculation').innerHTML = correlationCalc;
+
+            // Update residuals table with squared residuals
+            const residualsTableBody = document.getElementById('residualsTableBody');
+            residualsTableBody.innerHTML = '';
+            
+            for (let i = 0; i < 5; i++) {
+                const row = residualsTableBody.insertRow();
+                row.insertCell(0).textContent = xValues[i];
+                row.insertCell(1).textContent = yValues[i].toFixed(2);
+                row.insertCell(2).textContent = stats.predictedY[i].toFixed(2);
+                row.insertCell(3).textContent = stats.residuals[i].toFixed(2);
+                row.insertCell(4).textContent = stats.squaredResiduals[i].toFixed(2);
+            }
+
+            // Update SSR
+            document.getElementById('ssr').textContent = stats.ssr.toFixed(2);
+
+            // Update R-squared calculation
+            const rSquaredCalc = `\\[R^2 = 1 - \\frac{${stats.ssr.toFixed(2)}}{${stats.sst.toFixed(2)}} = ${stats.rSquared.toFixed(2)}\\]`;
+            document.getElementById('rSquaredCalculation').innerHTML = rSquaredCalc;
+
+            // Update SEE calculation
+            const seeCalc = `\\[SEE = \\sqrt{\\frac{${stats.ssr.toFixed(2)}}{${xValues.length - 2}}} = ${stats.see.toFixed(2)}\\]`;
+            document.getElementById('seeCalculation').innerHTML = seeCalc;
+
+            // Update hypothesis testing calculations
+            const slopeSECalc = `\\[SE_b = \\frac{${stats.see.toFixed(2)}}{\\sqrt{${xValues.reduce((sum, x) => sum + Math.pow(x - stats.meanX, 2), 0).toFixed(2)}}} = ${stats.seSlope.toFixed(2)}\\]`;
+            document.getElementById('slopeTestCalculation').innerHTML = slopeSECalc;
+            
+            const slopeTCalc = `\\[t = \\frac{${stats.slope.toFixed(2)}}{${stats.seSlope.toFixed(2)}} = ${stats.tSlope.toFixed(2)}\\]`;
+            document.getElementById('slopeTStatCalculation').innerHTML = slopeTCalc;
+            
+            const interceptSECalc = `\\[SE_a = ${stats.see.toFixed(2)} \\sqrt{\\frac{1}{${xValues.length}} + \\frac{${Math.pow(stats.meanX, 2).toFixed(2)}}{${xValues.reduce((sum, x) => sum + Math.pow(x - stats.meanX, 2), 0).toFixed(2)}}} = ${stats.seIntercept.toFixed(2)}\\]`;
+            document.getElementById('interceptTestCalculation').innerHTML = interceptSECalc;
+            
+            const interceptTCalc = `\\[t = \\frac{${stats.intercept.toFixed(2)}}{${stats.seIntercept.toFixed(2)}} = ${stats.tIntercept.toFixed(2)}\\]`;
+            document.getElementById('interceptTStatCalculation').innerHTML = interceptTCalc;
+
+            // Update confidence interval calculations
+            const slopeCICalc = `\\[${stats.slope.toFixed(2)} \\pm 3.182 \\times ${stats.seSlope.toFixed(2)} = [${stats.slopeCI.lower.toFixed(2)}, ${stats.slopeCI.upper.toFixed(2)}]\\]`;
+            document.getElementById('slopeCICalculation').innerHTML = slopeCICalc;
+            
+            const interceptCICalc = `\\[${stats.intercept.toFixed(2)} \\pm 3.182 \\times ${stats.seIntercept.toFixed(2)} = [${stats.interceptCI.lower.toFixed(2)}, ${stats.interceptCI.upper.toFixed(2)}]\\]`;
+            document.getElementById('interceptCICalculation').innerHTML = interceptCICalc;
+
+            // Update prediction for X=6
+            const predictionCalc = `\\[\\hat{y}_6 = ${stats.intercept.toFixed(2)} + ${stats.slope.toFixed(2)} \\times 6 = ${stats.predictedY6.toFixed(2)}\\]`;
+            document.getElementById('predictionCalculation').innerHTML = predictionCalc;
+            
+            const predIntervalCalc = `\\[${stats.predictedY6.toFixed(2)} \\pm 3.182 \\times ${stats.see.toFixed(2)} \\times \\sqrt{1 + \\frac{1}{5} + \\frac{(6 - ${stats.meanX.toFixed(2)})^2}{${xValues.reduce((sum, x) => sum + Math.pow(x - stats.meanX, 2), 0).toFixed(2)}}} = [${stats.predInterval6.lower.toFixed(2)}, ${stats.predInterval6.upper.toFixed(2)}]\\]`;
+            document.getElementById('predictionIntervalCalculation').innerHTML = predIntervalCalc;
+
+            // Update slopeDetailedCalculation with detailed calculation steps
+            const meanX = 3; // Fixed mean of X (1,2,3,4,5)
+            const meanY = stats.meanY;
+            
+            let detailedCalc = `\\(b = \\frac{`;
+            
+            // First part of the calculation showing (x_i - mean_x)(y_i - mean_y)
+            const terms1 = [];
+            for (let i = 0; i < xValues.length; i++) {
+                terms1.push(`(${xValues[i]}-${meanX.toFixed(1)})(${yValues[i].toFixed(1)}-${meanY.toFixed(1)})`);
+            }
+            detailedCalc += terms1.join(' + ');
+            
+            detailedCalc += `}{`;
+            
+            // Denominator showing (x_i - mean_x)^2
+            const terms2 = [];
+            for (let i = 0; i < xValues.length; i++) {
+                terms2.push(`(${xValues[i]}-${meanX.toFixed(1)})^2`);
+            }
+            detailedCalc += terms2.join(' + ');
+            
+            // Calculate the numerator and denominator
+            let numerator = 0;
+            let denominator = 0;
+            for (let i = 0; i < xValues.length; i++) {
+                numerator += (xValues[i] - meanX) * (yValues[i] - meanY);
+                denominator += Math.pow(xValues[i] - meanX, 2);
+            }
+            
+            // Skip the intermediate steps and just show the final result
+            detailedCalc += `} = ${stats.slope.toFixed(2)}\\)`;
+            
+            document.getElementById('slopeDetailedCalculation').innerHTML = detailedCalc;
+
+            MathJax.typeset();
+
+            // Update scatter plot with regression line
+            if (scatterChart) {
+                scatterChart.destroy();
+            }
+
+            const ctx = document.getElementById('scatterPlot').getContext('2d');
+            
+            // Generate points for prediction intervals
+            const predictionPoints = Array.from({length: 61}, (_, i) => i/10); // Points from 0 to 6 in 0.1 increments
+            const predictionUpper = predictionPoints.map(x => {
+                const sePred = stats.see * Math.sqrt(1 + 1/xValues.length + Math.pow(x - stats.meanX, 2)/xValues.reduce((sum, x) => sum + Math.pow(x - stats.meanX, 2), 0));
+                return stats.intercept + stats.slope * x + 3.182 * sePred;
+            });
+            const predictionLower = predictionPoints.map(x => {
+                const sePred = stats.see * Math.sqrt(1 + 1/xValues.length + Math.pow(x - stats.meanX, 2)/xValues.reduce((sum, x) => sum + Math.pow(x - stats.meanX, 2), 0));
+                return stats.intercept + stats.slope * x - 3.182 * sePred;
+            });
+
+            scatterChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Data Points',
+                        data: xValues.map((x, i) => ({x, y: yValues[i]})),
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        borderWidth: 1,
+                        pointRadius: 8
+                    },
+                    {
+                        label: 'Regression Line',
+                        data: [
+                            {x: 0, y: stats.intercept},
+                            {x: 6, y: stats.intercept + stats.slope * 6}
+                        ],
+                        type: 'line',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 0,
+                        showLine: true
+                    },
+                    {
+                        label: '95% Confidence Interval',
+                        data: predictionPoints.map((x, i) => ({x, y: predictionUpper[i]})),
+                        type: 'line',
+                        borderColor: 'rgba(255, 99, 132, 0.3)',
+                        borderWidth: 1,
+                        fill: '+1',
+                        pointRadius: 0,
+                        showLine: true
+                    },
+                    {
+                        label: '95% Confidence Interval',
+                        data: predictionPoints.map((x, i) => ({x, y: predictionLower[i]})),
+                        type: 'line',
+                        borderColor: 'rgba(255, 99, 132, 0.3)',
+                        borderWidth: 1,
+                        fill: false,
+                        pointRadius: 0,
+                        showLine: true
+                    },
+                    {
+                        label: 'Prediction for X=6',
+                        data: [{x: 6, y: stats.predictedY6}],
+                        backgroundColor: 'rgba(255, 215, 0, 0.8)',
+                        borderColor: 'rgb(255, 165, 0)',
+                        borderWidth: 2,
+                        pointRadius: 10,
+                        pointStyle: 'star'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: 0,
+                            max: 7,
+                            title: {
+                                display: true,
+                                text: 'X'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            min: 0,
+                            max: 10,
+                            title: {
+                                display: true,
+                                text: 'Y'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Add event listeners to all sliders
+        for (let i = 1; i <= 5; i++) {
+            document.getElementById(`slider${i}`).addEventListener('input', updateValues);
+        }
+
+        // Initial calculation
+        updateValues();
+    </script>
+</body>
+</html> 
