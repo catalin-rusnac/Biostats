@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi-Square Test in Biostatistics</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .slideshow-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .slide {
+            display: none;
+            padding: 40px;
+            min-height: 600px;
+        }
+        .slide.active {
+            display: block;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .formula {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2em;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .example {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .interactive {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #1976d2;
+        }
+        button:disabled {
+            background-color: #bdbdbd;
+            cursor: not-allowed;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .chart-container {
+            margin: 20px 0;
+            height: 400px;
+            position: relative;
+        }
+        .quiz {
+            background-color: #f9f0ff;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .question {
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options {
+            margin-left: 20px;
+        }
+        .option {
+            margin: 10px 0;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .option:hover {
+            background-color: #f0e6ff;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .explanation {
+            margin-top: 10px;
+            font-style: italic;
+            display: none;
+        }
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background-color: #2196f3;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+    <div class="slideshow-container">
+        <!-- Slide 1: Introduction -->
+        <div class="slide active">
+            <h1>Chi-Square Test in Biostatistics</h1>
+            <h2>Introduction</h2>
+            <p>The chi-square test is a statistical method used to determine if there is a significant association between categorical variables. In biostatistics, it's commonly used to analyze:</p>
+            <ul>
+                <li>Association between disease and risk factors</li>
+                <li>Distribution of genetic traits</li>
+                <li>Treatment outcomes in clinical trials</li>
+                <li>Prevalence of conditions in different populations</li>
+            </ul>
+            <div class="example">
+                <h3>Example Applications:</h3>
+                <ul>
+                    <li>Testing if a genetic mutation is associated with disease risk</li>
+                    <li>Comparing treatment response rates between different groups</li>
+                    <li>Analyzing the distribution of blood types in a population</li>
+                    <li>Evaluating the relationship between smoking and lung cancer</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 2: Types of Chi-Square Tests -->
+        <div class="slide">
+            <h2>Types of Chi-Square Tests</h2>
+            <div class="table-container">
+                <table>
+                    <tr>
+                        <th>Test Type</th>
+                        <th>Purpose</th>
+                        <th>Example</th>
+                    </tr>
+                    <tr>
+                        <td>Chi-Square Goodness of Fit</td>
+                        <td>Compare observed distribution to expected distribution</td>
+                        <td>Testing if blood type distribution matches population norms</td>
+                    </tr>
+                    <tr>
+                        <td>Chi-Square Test of Independence</td>
+                        <td>Test association between two categorical variables</td>
+                        <td>Examining relationship between smoking and lung cancer</td>
+                    </tr>
+                    <tr>
+                        <td>Chi-Square Test of Homogeneity</td>
+                        <td>Compare distributions across different populations</td>
+                        <td>Comparing disease prevalence across different regions</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="example">
+                <h3>Key Differences:</h3>
+                <ul>
+                    <li>Goodness of Fit: One categorical variable</li>
+                    <li>Test of Independence: Two categorical variables</li>
+                    <li>Test of Homogeneity: Multiple populations</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: Chi-Square Test Formula -->
+        <div class="slide">
+            <h2>Chi-Square Test Formula</h2>
+            <div class="formula">
+                \[ \chi^2 = \sum \frac{(O - E)^2}{E} \]
+            </div>
+            <p>Where:</p>
+            <ul>
+                <li>\(O\) = Observed frequency</li>
+                <li>\(E\) = Expected frequency</li>
+                <li>\(\sum\) = Sum over all categories</li>
+            </ul>
+            <div class="example">
+                <h3>Example Calculation:</h3>
+                <p>Testing if blood type distribution matches expected frequencies:</p>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Blood Type</th>
+                            <th>Observed (O)</th>
+                            <th>Expected (E)</th>
+                            <th>\((O-E)^2/E\)</th>
+                        </tr>
+                        <tr>
+                            <td>A</td>
+                            <td>42</td>
+                            <td>40</td>
+                            <td>0.1</td>
+                        </tr>
+                        <tr>
+                            <td>B</td>
+                            <td>28</td>
+                            <td>30</td>
+                            <td>0.133</td>
+                        </tr>
+                        <tr>
+                            <td>AB</td>
+                            <td>8</td>
+                            <td>10</td>
+                            <td>0.4</td>
+                        </tr>
+                        <tr>
+                            <td>O</td>
+                            <td>22</td>
+                            <td>20</td>
+                            <td>0.2</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td>100</td>
+                            <td>100</td>
+                            <td>0.833</td>
+                        </tr>
+                    </table>
+                </div>
+                <p>\(\chi^2 = 0.833\)</p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Degrees of Freedom -->
+        <div class="slide">
+            <h2>Degrees of Freedom</h2>
+            <div class="formula">
+                \[ df = (r - 1)(c - 1) \]
+            </div>
+            <p>Where:</p>
+            <ul>
+                <li>\(r\) = number of rows</li>
+                <li>\(c\) = number of columns</li>
+            </ul>
+            <div class="example">
+                <h3>Example:</h3>
+                <p>For a 2x2 contingency table:</p>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th>Disease +</th>
+                            <th>Disease -</th>
+                        </tr>
+                        <tr>
+                            <td>Exposed</td>
+                            <td>a</td>
+                            <td>b</td>
+                        </tr>
+                        <tr>
+                            <td>Not Exposed</td>
+                            <td>c</td>
+                            <td>d</td>
+                        </tr>
+                    </table>
+                </div>
+                <p>\(df = (2-1)(2-1) = 1\)</p>
+            </div>
+            <div class="interactive">
+                <h3>Interactive Example:</h3>
+                <p>Calculate degrees of freedom for different table sizes:</p>
+                <div class="controls">
+                    <label for="rows">Number of Rows:</label>
+                    <input type="number" id="rows" min="2" value="2">
+                    <label for="cols">Number of Columns:</label>
+                    <input type="number" id="cols" min="2" value="2">
+                    <button onclick="calculateDF()">Calculate</button>
+                </div>
+                <p id="dfResult"></p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Expected Frequencies -->
+        <div class="slide">
+            <h2>Calculating Expected Frequencies</h2>
+            <div class="formula">
+                \[ E_{ij} = \frac{(Row\ Total_i)(Column\ Total_j)}{Grand\ Total} \]
+            </div>
+            <div class="example">
+                <h3>Example: Smoking and Lung Cancer</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th>Lung Cancer</th>
+                            <th>No Lung Cancer</th>
+                            <th>Total</th>
+                        </tr>
+                        <tr>
+                            <td>Smokers</td>
+                            <td>Observed: 30</td>
+                            <td>Observed: 70</td>
+                            <td>100</td>
+                        </tr>
+                        <tr>
+                            <td>Non-Smokers</td>
+                            <td>Observed: 10</td>
+                            <td>Observed: 90</td>
+                            <td>100</td>
+                        </tr>
+                        <tr>
+                            <td>Total</td>
+                            <td>40</td>
+                            <td>160</td>
+                            <td>200</td>
+                        </tr>
+                    </table>
+                </div>
+                <p>Expected frequency for Smokers with Lung Cancer:</p>
+                <p>\(E = \frac{(100)(40)}{200} = 20\)</p>
+            </div>
+            <div class="interactive">
+                <h3>Calculate Expected Frequencies:</h3>
+                <div class="controls">
+                    <label for="rowTotal">Row Total:</label>
+                    <input type="number" id="rowTotal" value="100">
+                    <label for="colTotal">Column Total:</label>
+                    <input type="number" id="colTotal" value="40">
+                    <label for="grandTotal">Grand Total:</label>
+                    <input type="number" id="grandTotal" value="200">
+                    <button onclick="calculateExpected()">Calculate</button>
+                </div>
+                <p id="expectedResult"></p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Interpretation -->
+        <div class="slide">
+            <h2>Interpreting Chi-Square Results</h2>
+            <div class="formula">
+                \[ p-value = P(\chi^2 \geq \text{observed value}) \]
+            </div>
+            <div class="example">
+                <h3>Decision Rules:</h3>
+                <ul>
+                    <li>If p-value < 0.05: Reject null hypothesis (significant association)</li>
+                    <li>If p-value ≥ 0.05: Fail to reject null hypothesis (no significant association)</li>
+                </ul>
+            </div>
+            <div class="interactive">
+                <h3>Chi-Square Distribution</h3>
+                <p>Visualize how the chi-square distribution changes with different degrees of freedom:</p>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="df">Degrees of Freedom:</label>
+                        <input type="range" id="df" min="1" max="20" step="1" value="5">
+                        <span class="value-display" id="dfValue">5</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chiSquareChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Assumptions and Limitations -->
+        <div class="slide">
+            <h2>Assumptions and Limitations</h2>
+            <div class="example">
+                <h3>Assumptions:</h3>
+                <ul>
+                    <li>Independent observations</li>
+                    <li>Expected frequency ≥ 5 in each cell</li>
+                    <li>Random sampling</li>
+                    <li>Categorical data</li>
+                </ul>
+            </div>
+            <div class="example">
+                <h3>Limitations:</h3>
+                <ul>
+                    <li>Not suitable for small sample sizes</li>
+                    <li>Does not indicate strength of association</li>
+                    <li>Cannot determine causality</li>
+                    <li>Sensitive to sample size</li>
+                </ul>
+            </div>
+            <div class="example">
+                <h3>Alternatives for Small Samples:</h3>
+                <ul>
+                    <li>Fisher's Exact Test</li>
+                    <li>Yates' Correction</li>
+                    <li>Exact Tests</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 8: Practical Example -->
+        <div class="slide">
+            <h2>Practical Example: Genetic Association Study</h2>
+            <div class="example">
+                <h3>Research Question:</h3>
+                <p>Is there an association between a specific genetic variant and disease risk?</p>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th>Disease +</th>
+                            <th>Disease -</th>
+                            <th>Total</th>
+                        </tr>
+                        <tr>
+                            <td>Variant +</td>
+                            <td>45</td>
+                            <td>55</td>
+                            <td>100</td>
+                        </tr>
+                        <tr>
+                            <td>Variant -</td>
+                            <td>30</td>
+                            <td>70</td>
+                            <td>100</td>
+                        </tr>
+                        <tr>
+                            <td>Total</td>
+                            <td>75</td>
+                            <td>125</td>
+                            <td>200</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="interactive">
+                    <button onclick="calculateChiSquare()">Calculate Chi-Square</button>
+                    <p id="chiSquareResult"></p>
+                    <p id="interpretation"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Quiz -->
+        <div class="slide">
+            <h2>Quiz: Test Your Understanding</h2>
+            <div class="quiz">
+                <div class="question">
+                    <p>1. When should you use Fisher's Exact Test instead of Chi-Square?</p>
+                    <div class="options">
+                        <div class="option" onclick="checkAnswer(1, 'a')">When sample size is large</div>
+                        <div class="option" onclick="checkAnswer(1, 'b')">When expected frequencies are less than 5</div>
+                        <div class="option" onclick="checkAnswer(1, 'c')">When dealing with continuous variables</div>
+                    </div>
+                    <div class="feedback" id="feedback1"></div>
+                    <div class="explanation" id="explanation1"></div>
+                </div>
+                <div class="question">
+                    <p>2. What does a significant chi-square test result indicate?</p>
+                    <div class="options">
+                        <div class="option" onclick="checkAnswer(2, 'a')">A causal relationship between variables</div>
+                        <div class="option" onclick="checkAnswer(2, 'b')">A significant association between variables</div>
+                        <div class="option" onclick="checkAnswer(2, 'c')">The strength of the relationship</div>
+                    </div>
+                    <div class="feedback" id="feedback2"></div>
+                    <div class="explanation" id="explanation2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Resources -->
+        <div class="slide">
+            <h2>Additional Resources</h2>
+            <ul>
+                <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3900018/" target="_blank">Chi-Square Test in Medical Research</a></li>
+                <li><a href="https://www.biostathandbook.com/chigof.html" target="_blank">Handbook of Biological Statistics</a></li>
+                <li><a href="https://www.khanacademy.org/math/statistics-probability/inference-categorical-data-chi-square-tests" target="_blank">Khan Academy: Chi-Square Tests</a></li>
+                <li><a href="https://www.r-bloggers.com/2012/09/chi-square-tests/" target="_blank">R Tutorial: Chi-Square Tests</a></li>
+            </ul>
+            <div class="example">
+                <h3>R Code Examples:</h3>
+                <pre><code># Chi-Square Test in R
+# Create contingency table
+data <- matrix(c(45, 55, 30, 70), nrow = 2)
+colnames(data) <- c("Disease+", "Disease-")
+rownames(data) <- c("Variant+", "Variant-")
+
+# Perform chi-square test
+chisq.test(data)
+
+# Fisher's Exact Test
+fisher.test(data)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button onclick="prevSlide()" id="prevBtn">Previous</button>
+        <button onclick="nextSlide()" id="nextBtn">Next</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.querySelector('.progress-bar');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[n].classList.add('active');
+            progressBar.style.width = `${(n + 1) / slides.length * 100}%`;
+            prevBtn.disabled = n === 0;
+            nextBtn.disabled = n === slides.length - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        function calculateDF() {
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            const df = (rows - 1) * (cols - 1);
+            document.getElementById('dfResult').textContent = `Degrees of Freedom = ${df}`;
+        }
+
+        function calculateExpected() {
+            const rowTotal = parseInt(document.getElementById('rowTotal').value);
+            const colTotal = parseInt(document.getElementById('colTotal').value);
+            const grandTotal = parseInt(document.getElementById('grandTotal').value);
+            const expected = (rowTotal * colTotal) / grandTotal;
+            document.getElementById('expectedResult').textContent = `Expected Frequency = ${expected.toFixed(2)}`;
+        }
+
+        function calculateChiSquare() {
+            // Example calculation for the genetic association study
+            const observed = [[45, 55], [30, 70]];
+            const rowTotals = [100, 100];
+            const colTotals = [75, 125];
+            const grandTotal = 200;
+
+            let chiSquare = 0;
+            for (let i = 0; i < 2; i++) {
+                for (let j = 0; j < 2; j++) {
+                    const expected = (rowTotals[i] * colTotals[j]) / grandTotal;
+                    chiSquare += Math.pow(observed[i][j] - expected, 2) / expected;
+                }
+            }
+
+            document.getElementById('chiSquareResult').textContent = `Chi-Square = ${chiSquare.toFixed(2)}`;
+            document.getElementById('interpretation').textContent = chiSquare > 3.84 ? 
+                'Significant association (p < 0.05)' : 'No significant association (p ≥ 0.05)';
+        }
+
+        function checkAnswer(questionNum, selected) {
+            const feedback = document.getElementById(`feedback${questionNum}`);
+            const explanation = document.getElementById(`explanation${questionNum}`);
+            
+            if (questionNum === 1) {
+                if (selected === 'b') {
+                    feedback.textContent = 'Correct!';
+                    feedback.className = 'feedback correct';
+                    explanation.textContent = 'Fisher\'s Exact Test is used when expected frequencies are less than 5, as the chi-square approximation may not be valid.';
+                } else {
+                    feedback.textContent = 'Incorrect. Try again!';
+                    feedback.className = 'feedback incorrect';
+                    explanation.textContent = 'Fisher\'s Exact Test is specifically designed for small sample sizes where expected frequencies are less than 5.';
+                }
+            } else if (questionNum === 2) {
+                if (selected === 'b') {
+                    feedback.textContent = 'Correct!';
+                    feedback.className = 'feedback correct';
+                    explanation.textContent = 'A significant chi-square test indicates an association between variables, but does not prove causation or indicate the strength of the relationship.';
+                } else {
+                    feedback.textContent = 'Incorrect. Try again!';
+                    feedback.className = 'feedback incorrect';
+                    explanation.textContent = 'The chi-square test only indicates whether there is a significant association between variables, not causation or relationship strength.';
+                }
+            }
+            
+            feedback.style.display = 'block';
+            explanation.style.display = 'block';
+        }
+
+        // Chi-square distribution visualization
+        const chiSquareCtx = document.getElementById('chiSquareChart').getContext('2d');
+        let chiSquareChart = null;
+
+        function plotChiSquare(df) {
+            const start = 0;
+            const end = 200;
+            const step = 0.1;
+            const labels = [];
+            const densities = [];
+
+            for (let x = start; x <= end; x += step) {
+                labels.push(x.toFixed(1));
+                densities.push(chiSquarePDF(x, df));
+            }
+
+            if (chiSquareChart) {
+                chiSquareChart.destroy();
+            }
+
+            chiSquareChart = new Chart(chiSquareCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Chi-square Distribution (df = ${df})`,
+                        data: densities,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Value'
+                            },
+                            min: 0,
+                            max: 200
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Probability Density'
+                            },
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `f(${context.parsed.x.toFixed(1)}) = ${context.parsed.y.toFixed(4)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function chiSquarePDF(x, df) {
+            if (x <= 0) return 0;
+            const k = df / 2;
+            return (Math.pow(x, k - 1) * Math.exp(-x / 2)) / (Math.pow(2, k) * gamma(k));
+        }
+
+        function gamma(z) {
+            const g = 7;
+            const p = [
+                0.99999999999980993,
+                676.5203681218851,
+                -1259.1392167224028,
+                771.32342877765313,
+                -176.61502916214059,
+                12.507343278686905,
+                -0.13857109526572012,
+                9.9843695780195716e-6,
+                1.5056327351493116e-7
+            ];
+
+            if (z < 0.5) {
+                return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
+            }
+
+            z -= 1;
+            let x = p[0];
+            for (let i = 1; i < g + 2; i++) {
+                x += p[i] / (z + i);
+            }
+            const t = z + g + 0.5;
+            return Math.sqrt(2 * Math.PI) * Math.pow(t, z + 0.5) * Math.exp(-t) * x;
+        }
+
+        // Initialize the plot
+        document.getElementById('df').addEventListener('input', function() {
+            const df = parseInt(this.value);
+            document.getElementById('dfValue').textContent = df;
+            plotChiSquare(df);
+        });
+
+        // Initial plot
+        plotChiSquare(5);
+
+        // Initialize first slide
+        showSlide(0);
+    </script>
+</body>
+</html> 

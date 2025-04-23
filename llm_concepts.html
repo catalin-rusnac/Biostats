@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Large Language Models (LLMs) - Concepts and Applications</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h2 {
+            margin-top: 40px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        h3 {
+            margin-top: 30px;
+            color: #3498db;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .formula {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+        }
+        .interactive {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        label {
+            font-weight: 500;
+        }
+        input[type="range"] {
+            width: 200px;
+        }
+        .value-display {
+            font-family: monospace;
+            color: #666;
+        }
+        .chart-container {
+            margin: 20px 0;
+            height: 400px;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .warning {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .tip {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Large Language Models (LLMs) - Concepts and Applications</h1>
+
+        <div class="section">
+            <h2>Word2Vec and Word Embeddings</h2>
+            <p>Word2Vec is a technique that helps computers understand the meaning of words by representing them as points in space. Think of it like a map where words with similar meanings are close to each other, just like cities that are geographically close.</p>
+            
+            <h3>Skip-gram Model</h3>
+            <p>This model tries to predict the words that might appear around a given word. For example, if you see the word "statistics", you might expect to see words like "data", "analysis", or "probability" nearby.</p>
+            <div class="formula">
+                \[ P(\text{context word}|\text{target word}) = \frac{\exp(\text{similarity})}{\sum \exp(\text{similarity})} \]
+            </div>
+            <p>Where:</p>
+            <ul>
+                <li>Target word: The word we're focusing on (e.g., "statistics")</li>
+                <li>Context word: Words that might appear near it (e.g., "data", "analysis")</li>
+                <li>Similarity: How closely related the words are in meaning</li>
+            </ul>
+
+            <h3>Continuous Bag of Words (CBOW)</h3>
+            <p>This model works in reverse - it tries to predict a word based on the words around it. It's like trying to guess a missing word in a sentence based on the words before and after it.</p>
+            <div class="formula">
+                \[ P(\text{target word}|\text{context words}) = \frac{\exp(\text{average similarity})}{\sum \exp(\text{average similarity})} \]
+            </div>
+
+            <div class="note">
+                <p><strong>Note:</strong> Word2Vec helps computers understand that "statistics" is related to "data", "analysis", and "probability", just like how we understand these connections.</p>
+                <p>Explore word relationships interactively using the <a href="https://projector.tensorflow.org/" target="_blank">TensorFlow Embedding Projector</a>. Try searching for "statistics" to see related words in the embedding space!</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>LLM Architecture</h2>
+            
+            <h3>Transformer Architecture</h3>
+            <p>Think of a transformer like a team of experts working together to understand text. Each expert focuses on different aspects:</p>
+            <ul>
+                <li>Word Understanding: Converts words into numbers computers can work with</li>
+                <li>Position Tracking: Keeps track of where words are in a sentence</li>
+                <li>Attention: Helps focus on important words and their relationships</li>
+                <li>Processing: Combines information to understand the full meaning</li>
+                <li>Normalization: Makes sure everything stays balanced and stable</li>
+            </ul>
+
+            <h3>Self-Attention Mechanism</h3>
+            <p>This is like having a conversation where you pay attention to different parts of what's being said. For example, when reading "The p-value was significant at 0.05", you focus on both "p-value" and "0.05" to understand the statistical significance.</p>
+            <div class="formula">
+                \[ \text{Attention} = \text{softmax}\left(\frac{\text{Query} \times \text{Key}}{\sqrt{\text{dimension}}}\right) \times \text{Value} \]
+            </div>
+            <p>Where:</p>
+            <ul>
+                <li>Query: What we're looking for</li>
+                <li>Key: What we're comparing against</li>
+                <li>Value: The actual information we want</li>
+                <li>Dimension: A scaling factor to keep numbers manageable</li>
+            </ul>
+
+            <div class="note">
+                <p><strong>Note:</strong> The transformer architecture helps LLMs understand long sentences and complex relationships between words, similar to how we understand statistical concepts in context.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>LLM Parameters and Settings</h2>
+
+            <div class="interactive">
+                <h3>Temperature</h3>
+                <p>Think of temperature like a creativity dial. Lower values make the model more focused and predictable, while higher values make it more creative and varied.</p>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="temperature">Temperature (0.0 - 2.0):</label>
+                        <input type="range" id="temperature" min="0" max="2" step="0.1" value="1">
+                        <span class="value-display" id="temperatureValue">1.0</span>
+                    </div>
+                </div>
+                <div id="temperatureExplanation"></div>
+            </div>
+
+            <div class="interactive">
+                <h3>Top-p (Nucleus) Sampling</h3>
+                <p>This is like setting a confidence threshold. The model only considers words that together make up a certain percentage of the total probability.</p>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="topP">Top-p (0.0 - 1.0):</label>
+                        <input type="range" id="topP" min="0" max="1" step="0.1" value="0.9">
+                        <span class="value-display" id="topPValue">0.9</span>
+                    </div>
+                </div>
+                <div id="topPExplanation"></div>
+            </div>
+
+            <div class="interactive">
+                <h3>Top-k Sampling</h3>
+                <p>This limits the model to only consider the k most likely next words. It's like only looking at the top k options in a multiple-choice question.</p>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="topK">Top-k (1 - 100):</label>
+                        <input type="range" id="topK" min="1" max="100" step="1" value="50">
+                        <span class="value-display" id="topKValue">50</span>
+                    </div>
+                </div>
+                <div id="topKExplanation"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Best Practices and Tips</h2>
+
+            <div class="tip">
+                <h3>Prompt Engineering</h3>
+                <ul>
+                    <li>Be as clear as possible in your instructions</li>
+                    <li>Provide examples when asking for specific types of analysis</li>
+                    <li>Set the context (e.g., "You are a statistics tutor explaining...")</li>
+                    <li>Break complex statistical questions into smaller parts</li>
+                </ul>
+            </div>
+
+            <div class="tip">
+                <h3>Parameter Tuning</h3>
+                <ul>
+                    <li>Use lower temperature (0.2-0.5) for statistical calculations and definitions</li>
+                    <li>Use higher temperature (0.7-1.0) for explaining concepts in different ways</li>
+                    <li>Adjust top-p based on how diverse you want the explanations to be</li>
+                    <li>Use top-k to control how many different approaches to consider</li>
+                </ul>
+            </div>
+
+            <div class="warning">
+                <h3>Common Pitfalls</h3>
+                <ul>
+                    <li>Don't ask vague questions like "explain statistics" - be specific</li>
+                    <li>Always verify statistical calculations and formulas</li>
+                    <li>Be aware of how much context the model can handle at once</li>
+                    <li>Consider that longer, more detailed prompts may be more expensive</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Advanced Topics</h2>
+
+            <h3>Fine-tuning</h3>
+            <p>This is like teaching a general-purpose model to specialize in statistics. Different approaches include:</p>
+            <ul>
+                <li>Full fine-tuning: Complete retraining for statistical tasks</li>
+                <li>PEFT: More efficient training that only updates some parts</li>
+                <li>LoRA: A lightweight way to add statistical knowledge</li>
+                <li>QLoRA: An even more efficient version of LoRA</li>
+            </ul>
+
+            <h3>Retrieval-Augmented Generation (RAG)</h3>
+            <p>This helps the model provide accurate statistical information by:</p>
+            <ol>
+                <li>Looking up relevant statistical concepts</li>
+                <li>Finding related examples and formulas</li>
+                <li>Adding this information to the prompt</li>
+                <li>Generating a response with the correct context</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Temperature explanation
+        document.getElementById('temperature').addEventListener('input', function() {
+            const value = parseFloat(this.value);
+            document.getElementById('temperatureValue').textContent = value.toFixed(1);
+            
+            let explanation = '';
+            if (value < 0.5) {
+                explanation = 'Low temperature: More focused and deterministic outputs';
+            } else if (value < 1.0) {
+                explanation = 'Medium temperature: Balanced between creativity and focus';
+            } else {
+                explanation = 'High temperature: More creative and diverse outputs';
+            }
+            document.getElementById('temperatureExplanation').textContent = explanation;
+        });
+
+        // Top-p explanation
+        document.getElementById('topP').addEventListener('input', function() {
+            const value = parseFloat(this.value);
+            document.getElementById('topPValue').textContent = value.toFixed(1);
+            
+            let explanation = '';
+            if (value < 0.5) {
+                explanation = 'Low top-p: More focused on high-probability tokens';
+            } else if (value < 0.9) {
+                explanation = 'Medium top-p: Balanced diversity';
+            } else {
+                explanation = 'High top-p: More diverse outputs';
+            }
+            document.getElementById('topPExplanation').textContent = explanation;
+        });
+
+        // Top-k explanation
+        document.getElementById('topK').addEventListener('input', function() {
+            const value = parseInt(this.value);
+            document.getElementById('topKValue').textContent = value;
+            
+            let explanation = '';
+            if (value < 10) {
+                explanation = 'Low top-k: Very focused sampling';
+            } else if (value < 50) {
+                explanation = 'Medium top-k: Balanced sampling';
+            } else {
+                explanation = 'High top-k: More diverse sampling';
+            }
+            document.getElementById('topKExplanation').textContent = explanation;
+        });
+
+        // Initialize explanations
+        document.getElementById('temperature').dispatchEvent(new Event('input'));
+        document.getElementById('topP').dispatchEvent(new Event('input'));
+        document.getElementById('topK').dispatchEvent(new Event('input'));
+    </script>
+</body>
+</html> 

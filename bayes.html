@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bayes' Theorem</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .formula {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+        }
+        .formula-display {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+        .description {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        .interactive {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+        }
+        .chart-container {
+            margin: 20px 0;
+            height: 300px;
+            position: relative;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            margin-right: 15px;
+        }
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="range"] {
+            width: 200px;
+        }
+        .value-display {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f1f8e9;
+            border-radius: 4px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .data-table th {
+            background-color: #f2f2f2;
+        }
+        .example {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-radius: 4px;
+            border-left: 4px solid #ff9800;
+        }
+        .example-title {
+            font-weight: bold;
+            color: #e65100;
+            margin-bottom: 10px;
+        }
+        .tree-diagram {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .tree-node {
+            display: inline-block;
+            padding: 10px;
+            margin: 5px;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+            text-align: center;
+            min-width: 100px;
+        }
+        .tree-branch {
+            display: inline-block;
+            margin: 0 10px;
+            color: #666;
+        }
+        .tree-probability {
+            font-weight: bold;
+            color: #2196f3;
+        }
+        .tree-result {
+            font-weight: bold;
+            color: #4caf50;
+        }
+        .quiz-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .quiz-question {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .quiz-options {
+            margin: 10px 0;
+        }
+        .quiz-option {
+            display: block;
+            margin: 8px 0;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .quiz-option:hover {
+            background-color: #e9ecef;
+        }
+        .quiz-option.selected {
+            background-color: #cce5ff;
+            border-color: #b8daff;
+        }
+        .quiz-option.correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .quiz-option.incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .quiz-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .quiz-feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        .quiz-feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        .quiz-submit {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .quiz-submit:hover {
+            background-color: #2980b9;
+        }
+        .quiz-submit:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .quiz-explanation {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #fff3cd;
+            border-radius: 4px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bayes' Theorem</h1>
+        
+        <div class="section">
+            <h2>Introduction to Bayes' Theorem</h2>
+            <p class="description">Bayes' Theorem is a fundamental theorem in probability theory that describes how to update the probabilities of hypotheses when given evidence.</p>
+            
+            <div class="formula">
+                <p>Formula:</p>
+                <div class="formula-display">\(P(A|B) = \frac{P(B|A) \times P(A)}{P(B)}\)</div>
+                <p>Where:</p>
+                <ul>
+                    <li>\(P(A|B)\) is the posterior probability: the probability of hypothesis A given the evidence B</li>
+                    <li>\(P(B|A)\) is the likelihood: the probability of evidence B given that hypothesis A is true</li>
+                    <li>\(P(A)\) is the prior probability: the initial probability of hypothesis A</li>
+                    <li>\(P(B)\) is the evidence: the total probability of the evidence B</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="quiz-section">
+            <h2>Quiz: Understanding Bayes' Theorem</h2>
+            <div class="quiz-question">
+                <p><strong>Question 1:</strong> In Bayes' Theorem, what does \(P(A|B)\) represent?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option" data-correct="true">The probability of hypothesis A given evidence B (posterior probability)</div>
+                    <div class="quiz-option">The probability of evidence B given hypothesis A (likelihood)</div>
+                    <div class="quiz-option">The initial probability of hypothesis A (prior probability)</div>
+                    <div class="quiz-option">The total probability of evidence B</div>
+                </div>
+                <button class="quiz-submit">Submit</button>
+                <div class="quiz-feedback"></div>
+                <div class="quiz-explanation">
+                    <p>The posterior probability \(P(A|B)\) represents our updated belief about hypothesis A after observing evidence B. It's what we're trying to calculate using Bayes' Theorem.</p>
+                </div>
+            </div>
+            
+            <div class="quiz-question">
+                <p><strong>Question 2:</strong> Which of the following is NOT a component of Bayes' Theorem?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option">Prior probability</div>
+                    <div class="quiz-option">Likelihood</div>
+                    <div class="quiz-option" data-correct="true">Marginal probability</div>
+                    <div class="quiz-option">Evidence</div>
+                </div>
+                <button class="quiz-submit">Submit</button>
+                <div class="quiz-feedback"></div>
+                <div class="quiz-explanation">
+                    <p>While marginal probability is a concept in probability theory, it's not directly a component of Bayes' Theorem. The components are prior probability, likelihood, evidence, and posterior probability.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Interactive Bayes' Theorem Calculator</h2>
+            <p class="description">Use this calculator to explore how different prior probabilities and likelihoods affect the posterior probability.</p>
+            
+            <div class="interactive">
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="priorProbability">Prior Probability P(A):</label>
+                        <input type="range" id="priorProbability" min="0" max="1" value="0.5" step="0.01">
+                        <span class="value-display" id="priorProbabilityValue">0.5</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="likelihood">Likelihood P(B|A):</label>
+                        <input type="range" id="likelihood" min="0" max="1" value="0.7" step="0.01">
+                        <span class="value-display" id="likelihoodValue">0.7</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="evidence">Evidence P(B):</label>
+                        <input type="range" id="evidence" min="0" max="1" value="0.6" step="0.01">
+                        <span class="value-display" id="evidenceValue">0.6</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="bayesChart"></canvas>
+                </div>
+                <div class="result">
+                    <p>Posterior Probability P(A|B): <span id="posteriorProbability">0</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-section">
+            <h2>Quiz: Applying Bayes' Theorem</h2>
+            <div class="quiz-question">
+                <p><strong>Question 3:</strong> If the prior probability P(A) is 0.3, the likelihood P(B|A) is 0.8, and the evidence P(B) is 0.4, what is the posterior probability P(A|B)?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option">0.2</div>
+                    <div class="quiz-option" data-correct="true">0.6</div>
+                    <div class="quiz-option">0.8</div>
+                    <div class="quiz-option">0.4</div>
+                </div>
+                <button class="quiz-submit">Submit</button>
+                <div class="quiz-feedback"></div>
+                <div class="quiz-explanation">
+                    <p>Using Bayes' Theorem: P(A|B) = (P(B|A) × P(A)) / P(B) = (0.8 × 0.3) / 0.4 = 0.24 / 0.4 = 0.6</p>
+                </div>
+            </div>
+            
+            <div class="quiz-question">
+                <p><strong>Question 4:</strong> What happens to the posterior probability if the prior probability increases while keeping the likelihood and evidence constant?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option" data-correct="true">The posterior probability increases</div>
+                    <div class="quiz-option">The posterior probability decreases</div>
+                    <div class="quiz-option">The posterior probability remains the same</div>
+                    <div class="quiz-option">The posterior probability becomes zero</div>
+                </div>
+                <button class="quiz-submit">Submit</button>
+                <div class="quiz-feedback"></div>
+                <div class="quiz-explanation">
+                    <p>Since the posterior probability is directly proportional to the prior probability (P(A|B) = (P(B|A) × P(A)) / P(B)), an increase in the prior will lead to an increase in the posterior, assuming the likelihood and evidence remain constant.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Medical Testing Example</h2>
+            <p class="description">A common application of Bayes' Theorem is in medical testing, where we want to determine the probability of having a disease given a positive test result.</p>
+            
+            <div class="example">
+                <div class="example-title">Disease Testing Scenario</div>
+                <p id="scenarioText">Consider a disease that affects 1% of the population. A test for the disease has a 95% accuracy rate (5% false positives and 5% false negatives).</p>
+                
+                <div class="tree-diagram">
+                    <div class="tree-node">Population</div>
+                    <div class="tree-branch">→</div>
+                    <div class="tree-node">Disease (<span id="diseasePercent">1%</span>)</div>
+                    <div class="tree-branch">→</div>
+                    <div class="tree-node">Positive Test (<span id="positiveTestPercent">95%</span>)</div>
+                    <div class="tree-branch">→</div>
+                    <div class="tree-node tree-result">True Positive (<span id="truePositivePercent">0.95%</span>)</div>
+                    <br>
+                    <div class="tree-node">Population</div>
+                    <div class="tree-branch">→</div>
+                    <div class="tree-node">Disease (<span id="diseasePercent2">1%</span>)</div>
+                    <div class="tree-branch">→</div>
+                    <div class="tree-node">Negative Test (<span id="negativeTestPercent">5%</span>)</div>
+                    <div class="tree-branch">→</div>
+                    <div class="tree-node tree-result">False Negative (<span id="falseNegativePercent">0.05%</span>)</div>
+                    <br>
+                    <div class="tree-node">Population</div>
+                    <div class="tree-branch">→</div>
+                    <div class="tree-node">No Disease (<span id="noDiseasePercent">99%</span>)</div>
+                    <div class="tree-branch">→</div>
+                    <div class="tree-node">Positive Test (<span id="positiveTestPercent2">5%</span>)</div>
+                    <div class="tree-branch">→</div>
+                    <div class="tree-node tree-result">False Positive (<span id="falsePositivePercent">4.95%</span>)</div>
+                    <br>
+                    <div class="tree-node">Population</div>
+                    <div class="tree-branch">→</div>
+                    <div class="tree-node">No Disease (<span id="noDiseasePercent2">99%</span>)</div>
+                    <div class="tree-branch">→</div>
+                    <div class="tree-node">Negative Test (<span id="negativeTestPercent2">95%</span>)</div>
+                    <div class="tree-branch">→</div>
+                    <div class="tree-node tree-result">True Negative (<span id="trueNegativePercent">94.05%</span>)</div>
+                </div>
+                
+                <div class="interactive">
+                    <div class="controls">
+                        <div class="control-group">
+                            <label for="diseasePrevalence">Disease Prevalence (%):</label>
+                            <input type="range" id="diseasePrevalence" min="0.1" max="10" value="1" step="0.1">
+                            <span class="value-display" id="diseasePrevalenceValue">1%</span>
+                        </div>
+                        <div class="control-group">
+                            <label for="testAccuracy">Test Accuracy (%):</label>
+                            <input type="range" id="testAccuracy" min="80" max="99.9" value="95" step="0.1">
+                            <span class="value-display" id="testAccuracyValue">95%</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="diseaseTestChart"></canvas>
+                    </div>
+                    <div class="result">
+                        <p>Probability of having the disease given a positive test: <span id="positivePredictiveValue">0</span></p>
+                        <p>Probability of not having the disease given a negative test: <span id="negativePredictiveValue">0</span></p>
+                    </div>
+                    
+                    <div class="formula">
+                        <h3>Detailed Calculations</h3>
+                        <p><strong>Positive Predictive Value (PPV):</strong> The probability that a person has the disease given a positive test result.</p>
+                        <div class="formula-display">\(PPV = P(Disease|Positive) = \frac{P(Positive|Disease) \times P(Disease)}{P(Positive)}\)</div>
+                        <p>Where:</p>
+                        <ul>
+                            <li>\(P(Positive|Disease)\) = Sensitivity = True Positive Rate = <span id="sensitivityValue">0.95</span></li>
+                            <li>\(P(Disease)\) = Prevalence = <span id="prevalenceValue">0.01</span></li>
+                            <li>\(P(Positive)\) = \(P(Positive|Disease) \times P(Disease) + P(Positive|No Disease) \times P(No Disease)\)</li>
+                            <li>\(P(Positive|No Disease)\) = False Positive Rate = <span id="falsePositiveRateValue">0.05</span></li>
+                            <li>\(P(No Disease)\) = 1 - Prevalence = <span id="noDiseaseValue">0.99</span></li>
+                        </ul>
+                        <p>Plugging in the numbers:</p>
+                        <div class="formula-display">\(PPV = \frac{<span id="sensitivityValue2">0.95</span> \times <span id="prevalenceValue2">0.01</span>}{<span id="sensitivityValue3">0.95</span> \times <span id="prevalenceValue3">0.01</span> + <span id="falsePositiveRateValue2">0.05</span> \times <span id="noDiseaseValue2">0.99</span>} = \frac{<span id="numeratorValue">0.0095</span>}{<span id="denominatorValue">0.059</span>} = <span id="ppvValue">0.161</span>\)</div>
+                        
+                        <p><strong>Negative Predictive Value (NPV):</strong> The probability that a person does not have the disease given a negative test result.</p>
+                        <div class="formula-display">\(NPV = P(No Disease|Negative) = \frac{P(Negative|No Disease) \times P(No Disease)}{P(Negative)}\)</div>
+                        <p>Where:</p>
+                        <ul>
+                            <li>\(P(Negative|No Disease)\) = Specificity = True Negative Rate = <span id="specificityValue">0.95</span></li>
+                            <li>\(P(No Disease)\) = 1 - Prevalence = <span id="noDiseaseValue2">0.99</span></li>
+                            <li>\(P(Negative)\) = \(P(Negative|Disease) \times P(Disease) + P(Negative|No Disease) \times P(No Disease)\)</li>
+                            <li>\(P(Negative|Disease)\) = False Negative Rate = <span id="falseNegativeRateValue">0.05</span></li>
+                            <li>\(P(Disease)\) = Prevalence = <span id="prevalenceValue3">0.01</span></li>
+                        </ul>
+                        <p>Plugging in the numbers:</p>
+                        <div class="formula-display">\(NPV = \frac{<span id="specificityValue2">0.95</span> \times <span id="noDiseaseValue3">0.99</span>}{<span id="falseNegativeRateValue2">0.05</span> \times <span id="prevalenceValue4">0.01</span> + <span id="specificityValue3">0.95</span> \times <span id="noDiseaseValue4">0.99</span>} = \frac{<span id="numeratorValue2">0.9405</span>}{<span id="denominatorValue2">0.941</span>} = <span id="npvValue">0.999</span>\)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-section">
+            <h2>Quiz: Medical Testing</h2>
+            <div class="quiz-question">
+                <p><strong>Question 5:</strong> In the medical testing example, if a person tests positive for a disease with 1% prevalence and a test with 95% accuracy, what is the probability they actually have the disease?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option">95%</div>
+                    <div class="quiz-option">1%</div>
+                    <div class="quiz-option" data-correct="true">16.1%</div>
+                    <div class="quiz-option">5%</div>
+                </div>
+                <button class="quiz-submit">Submit</button>
+                <div class="quiz-feedback"></div>
+                <div class="quiz-explanation">
+                    <p>Using Bayes' Theorem: P(Disease|Positive) = (P(Positive|Disease) × P(Disease)) / P(Positive) = (0.95 × 0.01) / (0.95 × 0.01 + 0.05 × 0.99) = 0.0095 / 0.059 = 0.161 or 16.1%</p>
+                </div>
+            </div>
+            
+            <div class="quiz-question">
+                <p><strong>Question 6:</strong> What is a false positive in the context of medical testing?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option">A negative test result for someone who has the disease</div>
+                    <div class="quiz-option" data-correct="true">A positive test result for someone who does not have the disease</div>
+                    <div class="quiz-option">A positive test result for someone who has the disease</div>
+                    <div class="quiz-option">A negative test result for someone who does not have the disease</div>
+                </div>
+                <button class="quiz-submit">Submit</button>
+                <div class="quiz-feedback"></div>
+                <div class="quiz-explanation">
+                    <p>A false positive occurs when a test incorrectly indicates the presence of a condition (positive result) when it's actually not present. This is also known as a Type I error.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Spam Filtering Example</h2>
+            <p class="description">Bayes' Theorem is widely used in spam filtering to determine the probability that an email is spam based on the presence of certain words.</p>
+            
+            <div class="example">
+                <div class="example-title">Email Classification</div>
+                <p>Consider an email containing the word "lottery". We want to determine the probability that this email is spam.</p>
+                
+                <div class="interactive">
+                    <div class="controls">
+                        <div class="control-group">
+                            <label for="spamPrior">Prior Probability of Spam (%):</label>
+                            <input type="range" id="spamPrior" min="1" max="90" value="30" step="1">
+                            <span class="value-display" id="spamPriorValue">30%</span>
+                        </div>
+                        <div class="control-group">
+                            <label for="wordInSpam">Probability of "lottery" in Spam (%):</label>
+                            <input type="range" id="wordInSpam" min="1" max="100" value="80" step="1">
+                            <span class="value-display" id="wordInSpamValue">80%</span>
+                        </div>
+                        <div class="control-group">
+                            <label for="wordInHam">Probability of "lottery" in Non-Spam (%):</label>
+                            <input type="range" id="wordInHam" min="0.1" max="20" value="5" step="0.1">
+                            <span class="value-display" id="wordInHamValue">5%</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="spamChart"></canvas>
+                    </div>
+                    <div class="result">
+                        <p>Probability that the email is spam given it contains "lottery": <span id="spamPosterior">0</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-section">
+            <h2>Quiz: Spam Filtering</h2>
+            <div class="quiz-question">
+                <p><strong>Question 7:</strong> In the spam filtering example, if the prior probability of spam is 30%, the probability of the word "lottery" appearing in spam emails is 80%, and the probability of it appearing in non-spam emails is 5%, what is the probability that an email containing "lottery" is spam?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option">30%</div>
+                    <div class="quiz-option">80%</div>
+                    <div class="quiz-option" data-correct="true">88.9%</div>
+                    <div class="quiz-option">5%</div>
+                </div>
+                <button class="quiz-submit">Submit</button>
+                <div class="quiz-feedback"></div>
+                <div class="quiz-explanation">
+                    <p>Using Bayes' Theorem: P(Spam|"lottery") = (P("lottery"|Spam) × P(Spam)) / P("lottery") = (0.8 × 0.3) / (0.8 × 0.3 + 0.05 × 0.7) = 0.24 / 0.27 = 0.889 or 88.9%</p>
+                </div>
+            </div>
+            
+            <div class="quiz-question">
+                <p><strong>Question 8:</strong> Which of the following would most likely increase the probability that an email is classified as spam?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option">Decreasing the prior probability of spam</div>
+                    <div class="quiz-option">Decreasing the probability of the word appearing in spam emails</div>
+                    <div class="quiz-option" data-correct="true">Increasing the probability of the word appearing in spam emails</div>
+                    <div class="quiz-option">Increasing the probability of the word appearing in non-spam emails</div>
+                </div>
+                <button class="quiz-submit">Submit</button>
+                <div class="quiz-feedback"></div>
+                <div class="quiz-explanation">
+                    <p>Increasing the probability of a word appearing in spam emails (P(word|Spam)) would increase the numerator in Bayes' Theorem, making the posterior probability higher and increasing the likelihood that an email containing that word is classified as spam.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Bayesian Inference</h2>
+            <p class="description">Bayesian inference is a method of statistical inference in which Bayes' theorem is used to update the probability for a hypothesis as more evidence or information becomes available.</p>
+            
+            <div class="formula">
+                <p>Process:</p>
+                <ol>
+                    <li>Start with a prior probability \(P(A)\)</li>
+                    <li>Collect evidence \(B\)</li>
+                    <li>Calculate the likelihood \(P(B|A)\)</li>
+                    <li>Apply Bayes' Theorem to get the posterior probability \(P(A|B)\)</li>
+                    <li>Use the posterior as the new prior for the next update</li>
+                </ol>
+            </div>
+            
+            <div class="interactive">
+                <h3>Sequential Bayesian Updates</h3>
+                <p>See how multiple pieces of evidence affect our beliefs over time.</p>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="initialPrior">Initial Prior Probability:</label>
+                        <input type="range" id="initialPrior" min="0.1" max="0.9" value="0.5" step="0.05">
+                        <span class="value-display" id="initialPriorValue">0.5</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="evidenceStrength">Evidence Strength:</label>
+                        <input type="range" id="evidenceStrength" min="0.1" max="0.9" value="0.7" step="0.05">
+                        <span class="value-display" id="evidenceStrengthValue">0.7</span>
+                    </div>
+                    <button id="addEvidenceButton">Add Evidence</button>
+                    <button id="resetButton">Reset</button>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="sequentialChart"></canvas>
+                </div>
+                
+                <div class="result">
+                    <p>Current Prior: <span id="currentPrior">0.5</span></p>
+                    <p>Number of Evidence Points: <span id="evidenceCount">0</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-section">
+            <h2>Quiz: Bayesian Inference</h2>
+            <div class="quiz-question">
+                <p><strong>Question 9:</strong> In Bayesian inference, what happens to our belief about a hypothesis as we collect more evidence?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option">Our belief always increases</div>
+                    <div class="quiz-option">Our belief always decreases</div>
+                    <div class="quiz-option" data-correct="true">Our belief becomes more certain (either stronger or weaker)</div>
+                    <div class="quiz-option">Our belief remains unchanged</div>
+                </div>
+                <button class="quiz-submit">Submit</button>
+                <div class="quiz-feedback"></div>
+                <div class="quiz-explanation">
+                    <p>As we collect more evidence, our belief about a hypothesis becomes more certain. If the evidence supports the hypothesis, our belief becomes stronger; if the evidence contradicts the hypothesis, our belief becomes weaker. This is the essence of Bayesian updating.</p>
+                </div>
+            </div>
+            
+            <div class="quiz-question">
+                <p><strong>Question 10:</strong> In sequential Bayesian updates, what happens to the prior probability in each step?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option">It remains constant</div>
+                    <div class="quiz-option" data-correct="true">It becomes the posterior probability from the previous step</div>
+                    <div class="quiz-option">It becomes the likelihood from the previous step</div>
+                    <div class="quiz-option">It becomes the evidence from the previous step</div>
+                </div>
+                <button class="quiz-submit">Submit</button>
+                <div class="quiz-feedback"></div>
+                <div class="quiz-explanation">
+                    <p>In sequential Bayesian updates, the posterior probability from one step becomes the prior probability for the next step. This allows us to incorporate new evidence while building upon our previous knowledge.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Bayes' Theorem Calculator
+        let bayesChart = null;
+        
+        document.getElementById('priorProbability').addEventListener('input', function() {
+            document.getElementById('priorProbabilityValue').textContent = this.value;
+            updateBayesTheorem();
+        });
+        
+        document.getElementById('likelihood').addEventListener('input', function() {
+            document.getElementById('likelihoodValue').textContent = this.value;
+            updateBayesTheorem();
+        });
+        
+        document.getElementById('evidence').addEventListener('input', function() {
+            document.getElementById('evidenceValue').textContent = this.value;
+            updateBayesTheorem();
+        });
+        
+        function updateBayesTheorem() {
+            const prior = parseFloat(document.getElementById('priorProbability').value);
+            const likelihood = parseFloat(document.getElementById('likelihood').value);
+            const evidence = parseFloat(document.getElementById('evidence').value);
+            
+            if (evidence > 0) {
+                const posterior = (likelihood * prior) / evidence;
+                document.getElementById('posteriorProbability').textContent = posterior.toFixed(4);
+                
+                updateBayesChart(prior, likelihood, evidence, posterior);
+            } else {
+                document.getElementById('posteriorProbability').textContent = 'N/A';
+            }
+        }
+        
+        function updateBayesChart(prior, likelihood, evidence, posterior) {
+            const ctx = document.getElementById('bayesChart').getContext('2d');
+            
+            if (bayesChart) {
+                bayesChart.destroy();
+            }
+            
+            bayesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Prior P(A)', 'Likelihood P(B|A)', 'Evidence P(B)', 'Posterior P(A|B)'],
+                    datasets: [{
+                        label: 'Probability',
+                        data: [prior, likelihood, evidence, posterior],
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.7)',
+                            'rgba(46, 204, 113, 0.7)',
+                            'rgba(155, 89, 182, 0.7)',
+                            'rgba(230, 126, 34, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(155, 89, 182, 1)',
+                            'rgba(230, 126, 34, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: 'Probability',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Bayes\' Theorem Components',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.raw.toFixed(4)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Disease Testing Example
+        let diseaseTestChart = null;
+        
+        document.getElementById('diseasePrevalence').addEventListener('input', function() {
+            document.getElementById('diseasePrevalenceValue').textContent = this.value + '%';
+            updateDiseaseTestChart();
+        });
+        
+        document.getElementById('testAccuracy').addEventListener('input', function() {
+            document.getElementById('testAccuracyValue').textContent = this.value + '%';
+            updateDiseaseTestChart();
+        });
+        
+        function updateDiseaseTestChart() {
+            const prevalence = parseFloat(document.getElementById('diseasePrevalence').value) / 100;
+            const accuracy = parseFloat(document.getElementById('testAccuracy').value) / 100;
+            
+            // Update scenario text
+            document.getElementById('scenarioText').textContent = 
+                `Consider a disease that affects ${(prevalence * 100).toFixed(1)}% of the population. A test for the disease has a ${(accuracy * 100).toFixed(1)}% accuracy rate (${((1 - accuracy) * 100).toFixed(1)}% false positives and ${((1 - accuracy) * 100).toFixed(1)}% false negatives).`;
+            
+            // Update tree diagram values
+            document.getElementById('diseasePercent').textContent = (prevalence * 100).toFixed(1) + '%';
+            document.getElementById('diseasePercent2').textContent = (prevalence * 100).toFixed(1) + '%';
+            document.getElementById('noDiseasePercent').textContent = ((1 - prevalence) * 100).toFixed(1) + '%';
+            document.getElementById('noDiseasePercent2').textContent = ((1 - prevalence) * 100).toFixed(1) + '%';
+            
+            document.getElementById('positiveTestPercent').textContent = (accuracy * 100).toFixed(1) + '%';
+            document.getElementById('positiveTestPercent2').textContent = ((1 - accuracy) * 100).toFixed(1) + '%';
+            document.getElementById('negativeTestPercent').textContent = ((1 - accuracy) * 100).toFixed(1) + '%';
+            document.getElementById('negativeTestPercent2').textContent = (accuracy * 100).toFixed(1) + '%';
+            
+            // Calculate probabilities
+            const truePositives = prevalence * accuracy;
+            const falseNegatives = prevalence * (1 - accuracy);
+            const falsePositives = (1 - prevalence) * (1 - accuracy);
+            const trueNegatives = (1 - prevalence) * accuracy;
+            
+            document.getElementById('truePositivePercent').textContent = (truePositives * 100).toFixed(2) + '%';
+            document.getElementById('falseNegativePercent').textContent = (falseNegatives * 100).toFixed(2) + '%';
+            document.getElementById('falsePositivePercent').textContent = (falsePositives * 100).toFixed(2) + '%';
+            document.getElementById('trueNegativePercent').textContent = (trueNegatives * 100).toFixed(2) + '%';
+            
+            // Calculate predictive values
+            const positivePredictiveValue = truePositives / (truePositives + falsePositives);
+            const negativePredictiveValue = trueNegatives / (trueNegatives + falseNegatives);
+            
+            document.getElementById('positivePredictiveValue').textContent = positivePredictiveValue.toFixed(4);
+            document.getElementById('negativePredictiveValue').textContent = negativePredictiveValue.toFixed(4);
+            
+            // Update formula values
+            document.getElementById('sensitivityValue').textContent = accuracy.toFixed(4);
+            document.getElementById('sensitivityValue2').textContent = accuracy.toFixed(4);
+            document.getElementById('sensitivityValue3').textContent = accuracy.toFixed(4);
+            document.getElementById('prevalenceValue').textContent = prevalence.toFixed(4);
+            document.getElementById('prevalenceValue2').textContent = prevalence.toFixed(4);
+            document.getElementById('prevalenceValue3').textContent = prevalence.toFixed(4);
+            document.getElementById('prevalenceValue4').textContent = prevalence.toFixed(4);
+            document.getElementById('falsePositiveRateValue').textContent = (1 - accuracy).toFixed(4);
+            document.getElementById('falsePositiveRateValue2').textContent = (1 - accuracy).toFixed(4);
+            document.getElementById('noDiseaseValue').textContent = (1 - prevalence).toFixed(4);
+            document.getElementById('noDiseaseValue2').textContent = (1 - prevalence).toFixed(4);
+            document.getElementById('noDiseaseValue3').textContent = (1 - prevalence).toFixed(4);
+            document.getElementById('noDiseaseValue4').textContent = (1 - prevalence).toFixed(4);
+            document.getElementById('specificityValue').textContent = accuracy.toFixed(4);
+            document.getElementById('specificityValue2').textContent = accuracy.toFixed(4);
+            document.getElementById('specificityValue3').textContent = accuracy.toFixed(4);
+            document.getElementById('falseNegativeRateValue').textContent = (1 - accuracy).toFixed(4);
+            document.getElementById('falseNegativeRateValue2').textContent = (1 - accuracy).toFixed(4);
+            
+            // Calculate and update numerator and denominator values
+            const numerator = accuracy * prevalence;
+            const denominator = (accuracy * prevalence) + ((1 - accuracy) * (1 - prevalence));
+            document.getElementById('numeratorValue').textContent = numerator.toFixed(4);
+            document.getElementById('denominatorValue').textContent = denominator.toFixed(4);
+            document.getElementById('ppvValue').textContent = positivePredictiveValue.toFixed(4);
+            
+            const numerator2 = accuracy * (1 - prevalence);
+            const denominator2 = ((1 - accuracy) * prevalence) + (accuracy * (1 - prevalence));
+            document.getElementById('numeratorValue2').textContent = numerator2.toFixed(4);
+            document.getElementById('denominatorValue2').textContent = denominator2.toFixed(4);
+            document.getElementById('npvValue').textContent = negativePredictiveValue.toFixed(4);
+            
+            const ctx = document.getElementById('diseaseTestChart').getContext('2d');
+            
+            if (diseaseTestChart) {
+                diseaseTestChart.destroy();
+            }
+            
+            diseaseTestChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['True Positives', 'False Negatives', 'False Positives', 'True Negatives'],
+                    datasets: [{
+                        label: 'Probability',
+                        data: [truePositives, falseNegatives, falsePositives, trueNegatives],
+                        backgroundColor: ['#2ecc71', '#e74c3c', '#f39c12', '#3498db'],
+                        borderColor: ['#27ae60', '#c0392b', '#d35400', '#2980b9'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Test Outcome',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: 'Probability',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Disease Test Results',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.raw.toFixed(4)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Spam Filtering Example
+        let spamChart = null;
+        
+        document.getElementById('spamPrior').addEventListener('input', function() {
+            document.getElementById('spamPriorValue').textContent = this.value + '%';
+            updateSpamFiltering();
+        });
+        
+        document.getElementById('wordInSpam').addEventListener('input', function() {
+            document.getElementById('wordInSpamValue').textContent = this.value + '%';
+            updateSpamFiltering();
+        });
+        
+        document.getElementById('wordInHam').addEventListener('input', function() {
+            document.getElementById('wordInHamValue').textContent = this.value + '%';
+            updateSpamFiltering();
+        });
+        
+        function updateSpamFiltering() {
+            const spamPrior = parseFloat(document.getElementById('spamPrior').value) / 100;
+            const wordInSpam = parseFloat(document.getElementById('wordInSpam').value) / 100;
+            const wordInHam = parseFloat(document.getElementById('wordInHam').value) / 100;
+            
+            // Calculate the probability of the word appearing in any email
+            const wordProbability = (spamPrior * wordInSpam) + ((1 - spamPrior) * wordInHam);
+            
+            // Calculate the posterior probability using Bayes' Theorem
+            const spamPosterior = (wordInSpam * spamPrior) / wordProbability;
+            
+            document.getElementById('spamPosterior').textContent = spamPosterior.toFixed(4);
+            
+            const ctx = document.getElementById('spamChart').getContext('2d');
+            
+            if (spamChart) {
+                spamChart.destroy();
+            }
+            
+            spamChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Prior P(Spam)', 'P("lottery"|Spam)', 'P("lottery"|Not Spam)', 'P("lottery")', 'Posterior P(Spam|"lottery")'],
+                    datasets: [{
+                        label: 'Probability',
+                        data: [spamPrior, wordInSpam, wordInHam, wordProbability, spamPosterior],
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.7)',
+                            'rgba(46, 204, 113, 0.7)',
+                            'rgba(155, 89, 182, 0.7)',
+                            'rgba(230, 126, 34, 0.7)',
+                            'rgba(231, 76, 60, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(155, 89, 182, 1)',
+                            'rgba(230, 126, 34, 1)',
+                            'rgba(231, 76, 60, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: 'Probability',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Spam Filtering with Bayes\' Theorem',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.raw.toFixed(4)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Sequential Bayesian Updates
+        let sequentialChart = null;
+        let evidencePoints = [];
+        let currentPriorValue = 0.5;
+        
+        document.getElementById('initialPrior').addEventListener('input', function() {
+            document.getElementById('initialPriorValue').textContent = this.value;
+            currentPriorValue = parseFloat(this.value);
+            document.getElementById('currentPrior').textContent = currentPriorValue.toFixed(4);
+        });
+        
+        document.getElementById('evidenceStrength').addEventListener('input', function() {
+            document.getElementById('evidenceStrengthValue').textContent = this.value;
+        });
+        
+        document.getElementById('addEvidenceButton').addEventListener('click', function() {
+            const evidenceStrength = parseFloat(document.getElementById('evidenceStrength').value);
+            
+            // Add new evidence point
+            evidencePoints.push({
+                prior: currentPriorValue,
+                evidence: evidenceStrength
+            });
+            
+            // Update the prior for the next evidence point
+            currentPriorValue = (evidenceStrength * currentPriorValue) / 
+                               (evidenceStrength * currentPriorValue + (1 - evidenceStrength) * (1 - currentPriorValue));
+            
+            document.getElementById('currentPrior').textContent = currentPriorValue.toFixed(4);
+            document.getElementById('evidenceCount').textContent = evidencePoints.length;
+            
+            updateSequentialChart();
+        });
+        
+        document.getElementById('resetButton').addEventListener('click', function() {
+            evidencePoints = [];
+            currentPriorValue = parseFloat(document.getElementById('initialPrior').value);
+            document.getElementById('currentPrior').textContent = currentPriorValue.toFixed(4);
+            document.getElementById('evidenceCount').textContent = '0';
+            updateSequentialChart();
+        });
+        
+        function updateSequentialChart() {
+            const ctx = document.getElementById('sequentialChart').getContext('2d');
+            
+            if (sequentialChart) {
+                sequentialChart.destroy();
+            }
+            
+            // Create data points for the chart
+            const labels = [];
+            const priorValues = [];
+            const posteriorValues = [];
+            
+            if (evidencePoints.length === 0) {
+                labels.push('Initial');
+                priorValues.push(currentPriorValue);
+                posteriorValues.push(currentPriorValue);
+            } else {
+                labels.push('Initial');
+                priorValues.push(evidencePoints[0].prior);
+                posteriorValues.push(currentPriorValue);
+                
+                for (let i = 1; i < evidencePoints.length; i++) {
+                    labels.push(`Evidence ${i}`);
+                    priorValues.push(evidencePoints[i].prior);
+                    posteriorValues.push(currentPriorValue);
+                }
+            }
+            
+            sequentialChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Prior Probability',
+                            data: priorValues,
+                            borderColor: 'rgba(52, 152, 219, 1)',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            fill: false,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Posterior Probability',
+                            data: posteriorValues,
+                            borderColor: 'rgba(231, 76, 60, 1)',
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            fill: false,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: 'Probability',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Update Step',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Sequential Bayesian Updates',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw.toFixed(4)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Quiz functionality
+        document.querySelectorAll('.quiz-question').forEach(question => {
+            const options = question.querySelectorAll('.quiz-option');
+            const submitButton = question.querySelector('.quiz-submit');
+            const feedback = question.querySelector('.quiz-feedback');
+            const explanation = question.querySelector('.quiz-explanation');
+            
+            // Add click event to options
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove selected class from all options
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    // Add selected class to clicked option
+                    option.classList.add('selected');
+                    // Enable submit button
+                    submitButton.disabled = false;
+                });
+            });
+            
+            // Add submit event
+            submitButton.addEventListener('click', () => {
+                const selectedOption = question.querySelector('.quiz-option.selected');
+                
+                if (!selectedOption) return;
+                
+                // Disable all options and submit button
+                options.forEach(opt => opt.style.pointerEvents = 'none');
+                submitButton.disabled = true;
+                
+                // Check if correct
+                const isCorrect = selectedOption.hasAttribute('data-correct');
+                
+                // Add correct/incorrect class to selected option
+                selectedOption.classList.add(isCorrect ? 'correct' : 'incorrect');
+                
+                // If incorrect, highlight the correct option
+                if (!isCorrect) {
+                    const correctOption = question.querySelector('.quiz-option[data-correct="true"]');
+                    correctOption.classList.add('correct');
+                }
+                
+                // Show feedback
+                feedback.textContent = isCorrect ? 'Correct!' : 'Incorrect. Try again!';
+                feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+                
+                // Show explanation
+                explanation.style.display = 'block';
+            });
+        });
+        
+        // Initialize all charts
+        updateBayesTheorem();
+        updateDiseaseTestChart();
+        updateSpamFiltering();
+        updateSequentialChart();
+    </script>
+</body>
+</html> 

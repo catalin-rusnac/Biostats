@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning for Biostatistics</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .code-block {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 15px 0;
+        }
+        .output-block {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 15px 0;
+        }
+        .note {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-left: 4px solid #4caf50;
+            margin: 15px 0;
+        }
+        .warning {
+            background-color: #fff3e0;
+            padding: 15px;
+            border-left: 4px solid #ff9800;
+            margin: 15px 0;
+        }
+        .tip {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196f3;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .formula {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.2em;
+        }
+        .interactive {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f0f7ff;
+            border-radius: 8px;
+            border: 1px solid #cce5ff;
+        }
+        .chart-container {
+            margin: 20px 0;
+            height: 400px;
+            position: relative;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            margin-right: 15px;
+        }
+        .quiz {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f9f0ff;
+            border-radius: 8px;
+            border: 1px solid #e6ccff;
+        }
+        .question {
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options {
+            margin-left: 20px;
+        }
+        .option {
+            margin: 10px 0;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .option:hover {
+            background-color: #f0e6ff;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .explanation {
+            margin-top: 10px;
+            font-style: italic;
+            display: none;
+        }
+        .biotech-example {
+            background-color: #f0f4f8;
+            padding: 15px;
+            border-left: 4px solid #5d8aa8;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Machine Learning for Biostatistics</h1>
+        
+        <div class="section">
+            <h2>Introduction to Machine Learning in Biostatistics</h2>
+            <p>Machine learning (ML) has become an essential tool in biostatistics, enabling researchers to analyze complex biological data, identify patterns, and make predictions. This guide introduces key ML concepts and their applications in biostatistics, progressing from fundamental concepts to advanced techniques.</p>
+            
+            <div class="note">
+                <p><strong>Why Machine Learning in Biostatistics?</strong></p>
+                <ul>
+                    <li>Handling high-dimensional data (e.g., genomics, proteomics)</li>
+                    <li>Identifying complex patterns in biological systems</li>
+                    <li>Making predictions from large datasets</li>
+                    <li>Classifying samples based on multiple features</li>
+                    <li>Discovering biomarkers and therapeutic targets</li>
+                </ul>
+            </div>
+            
+            <div class="biotech-example">
+                <p><strong>Biotechnology Application:</strong> In drug discovery, machine learning models can predict the binding affinity of potential drug compounds to target proteins, significantly accelerating the screening process and reducing costs.</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Fundamental Concepts</h2>
+            
+            <h3>Supervised vs. Unsupervised Learning</h3>
+            <p>Machine learning approaches can be broadly categorized into supervised and unsupervised learning:</p>
+            
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Biostatistics Applications</th>
+                </tr>
+                <tr>
+                    <td><strong>Supervised Learning</strong></td>
+                    <td>Models learn from labeled data (input-output pairs) to make predictions on new, unlabeled data.</td>
+                    <td>Disease diagnosis, survival prediction, drug response prediction</td>
+                </tr>
+                <tr>
+                    <td><strong>Unsupervised Learning</strong></td>
+                    <td>Models identify patterns in unlabeled data without predefined outcomes.</td>
+                    <td>Patient clustering, gene expression pattern discovery, biomarker identification</td>
+                </tr>
+            </table>
+            
+            <div class="biotech-example">
+                <p><strong>Biotechnology Application:</strong> In cancer research, supervised learning can predict patient survival based on gene expression profiles, while unsupervised learning can identify distinct molecular subtypes of cancer.</p>
+            </div>
+            
+            <h3>Training, Validation, and Test Sets</h3>
+            <p>To evaluate model performance and prevent overfitting, data is typically divided into three sets:</p>
+            
+            <ul>
+                <li><strong>Training Set:</strong> Used to train the model (typically 60-70% of data)</li>
+                <li><strong>Validation Set:</strong> Used to tune hyperparameters and select the best model (typically 15-20% of data)</li>
+                <li><strong>Test Set:</strong> Used to evaluate the final model's performance on unseen data (typically 15-20% of data)</li>
+            </ul>
+            
+            <div class="code-block">
+                <pre><code># Splitting data into training, validation, and test sets
+set.seed(123)  # For reproducibility
+n <- nrow(data)
+train_idx <- sample(1:n, 0.7 * n)
+val_idx <- sample(setdiff(1:n, train_idx), 0.15 * n)
+test_idx <- setdiff(1:n, c(train_idx, val_idx))
+
+train_data <- data[train_idx, ]
+val_data <- data[val_idx, ]
+test_data <- data[test_idx, ]</code></pre>
+            </div>
+            
+            <div class="warning">
+                <p><strong>Cross-Validation:</strong> For small datasets, k-fold cross-validation is often used instead of a separate validation set. This involves dividing the data into k subsets and using each subset as a validation set while training on the remaining data.</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Distance Metrics</h2>
+            
+            <h3>Euclidean Distance</h3>
+            <p>Euclidean distance is the most common distance metric, measuring the straight-line distance between two points in Euclidean space:</p>
+            
+            <div class="formula">
+                \[ d(x, y) = \sqrt{\sum_{i=1}^{n} (x_i - y_i)^2} \]
+            </div>
+            
+            <p>Where \(x\) and \(y\) are two points in n-dimensional space.</p>
+            
+            <div class="code-block">
+                <pre><code># Calculating Euclidean distance in R
+euclidean_distance <- function(x, y) {
+  sqrt(sum((x - y)^2))
+}
+
+# Example
+point1 <- c(1, 2, 3)
+point2 <- c(4, 5, 6)
+distance <- euclidean_distance(point1, point2)
+print(distance)  # 5.196152</code></pre>
+            </div>
+            
+            <div class="biotech-example">
+                <p><strong>Biotechnology Application:</strong> In proteomics, Euclidean distance can be used to measure the similarity between protein expression profiles across different samples, helping identify proteins with similar expression patterns.</p>
+            </div>
+            
+            <h3>Manhattan Distance</h3>
+            <p>Manhattan distance (also known as city block distance) measures the sum of absolute differences between coordinates:</p>
+            
+            <div class="formula">
+                \[ d(x, y) = \sum_{i=1}^{n} |x_i - y_i| \]
+            </div>
+            
+            <div class="code-block">
+                <pre><code># Calculating Manhattan distance in R
+manhattan_distance <- function(x, y) {
+  sum(abs(x - y))
+}
+
+# Example
+point1 <- c(1, 2, 3)
+point2 <- c(4, 5, 6)
+distance <- manhattan_distance(point1, point2)
+print(distance)  # 9</code></pre>
+            </div>
+            
+            <h3>Cosine Similarity</h3>
+            <p>Cosine similarity measures the cosine of the angle between two vectors, indicating their orientation similarity:</p>
+            
+            <div class="formula">
+                \[ \text{cosine similarity} = \frac{x \cdot y}{\|x\| \|y\|} = \frac{\sum_{i=1}^{n} x_i y_i}{\sqrt{\sum_{i=1}^{n} x_i^2} \sqrt{\sum_{i=1}^{n} y_i^2}} \]
+            </div>
+            
+            <div class="code-block">
+                <pre><code># Calculating cosine similarity in R
+cosine_similarity <- function(x, y) {
+  dot_product <- sum(x * y)
+  norm_x <- sqrt(sum(x^2))
+  norm_y <- sqrt(sum(y^2))
+  dot_product / (norm_x * norm_y)
+}
+
+# Example
+vector1 <- c(1, 2, 3)
+vector2 <- c(4, 5, 6)
+similarity <- cosine_similarity(vector1, vector2)
+print(similarity)  # 0.9746318</code></pre>
+            </div>
+            
+            <div class="biotech-example">
+                <p><strong>Biotechnology Application:</strong> In transcriptomics, cosine similarity is often used to compare gene expression profiles, as it focuses on the pattern of expression rather than absolute values, making it less sensitive to normalization differences.</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Dimensionality Reduction</h2>
+            
+            <h3>Principal Component Analysis (PCA)</h3>
+            <p>PCA is a dimensionality reduction technique that transforms high-dimensional data into a lower-dimensional space while preserving as much variance as possible.</p>
+            
+            <div class="formula">
+                \[ \text{Principal Component} = w_1X_1 + w_2X_2 + ... + w_pX_p \]
+            </div>
+            
+            <p>Where \(w_i\) are the weights (loadings) and \(X_i\) are the original variables.</p>
+            
+            <div class="code-block">
+                <pre><code># Performing PCA in R
+# Assuming data is a matrix or data frame with numeric columns
+pca_result <- prcomp(data, scale. = TRUE)
+
+# Summary of PCA results
+summary(pca_result)
+
+# Accessing loadings (weights)
+loadings <- pca_result$rotation
+
+# Accessing scores (transformed data)
+scores <- pca_result$x
+
+# Visualization
+plot(pca_result)
+biplot(pca_result)
+screeplot(pca_result)</code></pre>
+            </div>
+            
+            <div class="biotech-example">
+                <p><strong>Biotechnology Application:</strong> In genomics, PCA is used to visualize the overall structure of gene expression data, identify batch effects, and reduce the dimensionality of high-throughput sequencing data for downstream analysis.</p>
+            </div>
+            
+            <h3>t-Distributed Stochastic Neighbor Embedding (t-SNE)</h3>
+            <p>t-SNE is a non-linear dimensionality reduction technique particularly effective for visualizing high-dimensional data in 2D or 3D space.</p>
+            
+            <div class="code-block">
+                <pre><code># Performing t-SNE in R (requires Rtsne package)
+# install.packages("Rtsne")
+library(Rtsne)
+
+# Assuming data is a matrix or data frame with numeric columns
+tsne_result <- Rtsne(data, perplexity = 30, theta = 0.5, dims = 2)
+
+# Visualization
+plot(tsne_result$Y, col = labels, pch = 16, 
+     xlab = "t-SNE dimension 1", ylab = "t-SNE dimension 2")</code></pre>
+            </div>
+            
+            <div class="biotech-example">
+                <p><strong>Biotechnology Application:</strong> In single-cell RNA sequencing, t-SNE is widely used to visualize the clustering of cells based on their gene expression profiles, helping identify distinct cell types and states.</p>
+            </div>
+            
+            <h3>Uniform Manifold Approximation and Projection (UMAP)</h3>
+            <p>UMAP is a newer dimensionality reduction technique that often provides better visualization than t-SNE, especially for preserving both local and global structure.</p>
+            
+            <div class="code-block">
+                <pre><code># Performing UMAP in R (requires umap package)
+# install.packages("umap")
+library(umap)
+
+# Assuming data is a matrix or data frame with numeric columns
+umap_result <- umap(data, n_neighbors = 15, min_dist = 0.1)
+
+# Visualization
+plot(umap_result$layout, col = labels, pch = 16, 
+     xlab = "UMAP dimension 1", ylab = "UMAP dimension 2")</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Clustering Algorithms</h2>
+            
+            <h3>K-Means Clustering</h3>
+            <p>K-means is a partitioning clustering algorithm that divides data into k clusters by minimizing the sum of squared distances between data points and their cluster centroids.</p>
+            
+            <div class="formula">
+                \[ \text{Objective Function} = \sum_{i=1}^{k} \sum_{x \in C_i} \|x - \mu_i\|^2 \]
+            </div>
+            
+            <p>Where \(C_i\) is the i-th cluster and \(\mu_i\) is its centroid.</p>
+            
+            <div class="code-block">
+                <pre><code># Performing K-means clustering in R
+# Assuming data is a matrix or data frame with numeric columns
+kmeans_result <- kmeans(data, centers = 3, nstart = 25)
+
+# Accessing cluster assignments
+clusters <- kmeans_result$cluster
+
+# Accessing cluster centroids
+centroids <- kmeans_result$centers
+
+# Visualization (if data is 2D or using PCA/t-SNE for higher dimensions)
+plot(data, col = clusters, pch = 16)
+points(centroids, col = 1:3, pch = 3, cex = 2, lwd = 2)</code></pre>
+            </div>
+            
+            <div class="biotech-example">
+                <p><strong>Biotechnology Application:</strong> In proteomics, K-means clustering is used to group proteins with similar expression patterns across different conditions, helping identify protein complexes and functional modules.</p>
+            </div>
+            
+            <h3>Hierarchical Clustering</h3>
+            <p>Hierarchical clustering creates a tree of clusters (dendrogram) by iteratively merging or splitting clusters based on their similarity.</p>
+            
+            <div class="code-block">
+                <pre><code># Performing hierarchical clustering in R
+# Assuming data is a matrix or data frame with numeric columns
+# Calculate distance matrix
+dist_matrix <- dist(data, method = "euclidean")
+
+# Perform hierarchical clustering
+hc_result <- hclust(dist_matrix, method = "ward.D2")
+
+# Visualization
+plot(hc_result)
+
+# Cut the dendrogram to get clusters
+clusters <- cutree(hc_result, k = 3)</code></pre>
+            </div>
+            
+            <div class="biotech-example">
+                <p><strong>Biotechnology Application:</strong> In transcriptomics, hierarchical clustering is used to create heatmaps of gene expression data, revealing patterns of co-expression and potential regulatory relationships.</p>
+            </div>
+            
+            <h3>DBSCAN (Density-Based Spatial Clustering of Applications with Noise)</h3>
+            <p>DBSCAN identifies clusters based on the density of data points, making it effective for finding clusters of arbitrary shapes and handling noise.</p>
+            
+            <div class="code-block">
+                <pre><code># Performing DBSCAN clustering in R (requires dbscan package)
+# install.packages("dbscan")
+library(dbscan)
+
+# Assuming data is a matrix or data frame with numeric columns
+dbscan_result <- dbscan(data, eps = 0.5, minPts = 5)
+
+# Accessing cluster assignments
+clusters <- dbscan_result$cluster
+
+# Visualization
+plot(data, col = clusters + 1, pch = 16)</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Classification Algorithms</h2>
+            
+            <h3>Logistic Regression</h3>
+            <p>Logistic regression is a linear model for classification that estimates the probability of a binary outcome.</p>
+            
+            <div class="formula">
+                \[ P(Y=1|X) = \frac{1}{1 + e^{-(\beta_0 + \beta_1X_1 + ... + \beta_pX_p)}} \]
+            </div>
+            
+            <div class="code-block">
+                <pre><code># Performing logistic regression in R
+# Assuming data has features X and binary outcome y
+glm_model <- glm(y ~ ., family = binomial(link = "logit"), data = data)
+
+# Summary of the model
+summary(glm_model)
+
+# Making predictions
+predictions <- predict(glm_model, newdata = test_data, type = "response")
+predicted_classes <- ifelse(predictions > 0.5, 1, 0)
+
+# Evaluating performance
+confusion_matrix <- table(Actual = test_data$y, Predicted = predicted_classes)
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+print(accuracy)</code></pre>
+            </div>
+            
+            <div class="biotech-example">
+                <p><strong>Biotechnology Application:</strong> In clinical diagnostics, logistic regression is used to predict the probability of disease based on patient characteristics and biomarker levels, helping in early diagnosis and risk assessment.</p>
+            </div>
+            
+            <h3>Decision Trees</h3>
+            <p>Decision trees make predictions by splitting the data based on feature values, creating a tree-like structure of decisions.</p>
+            
+            <div class="code-block">
+                <pre><code># Performing decision tree classification in R (requires rpart package)
+# install.packages("rpart")
+library(rpart)
+
+# Assuming data has features X and outcome y
+tree_model <- rpart(y ~ ., data = data, method = "class")
+
+# Summary of the model
+summary(tree_model)
+
+# Visualization
+plot(tree_model)
+text(tree_model)
+
+# Making predictions
+predictions <- predict(tree_model, newdata = test_data, type = "class")
+
+# Evaluating performance
+confusion_matrix <- table(Actual = test_data$y, Predicted = predictions)
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+print(accuracy)</code></pre>
+            </div>
+            
+            <h3>Random Forests</h3>
+            <p>Random forests are an ensemble method that combines multiple decision trees, each trained on a random subset of features and data samples.</p>
+            
+            <div class="code-block">
+                <pre><code># Performing random forest classification in R (requires randomForest package)
+# install.packages("randomForest")
+library(randomForest)
+
+# Assuming data has features X and outcome y
+rf_model <- randomForest(y ~ ., data = data, ntree = 500, mtry = sqrt(ncol(data)))
+
+# Summary of the model
+print(rf_model)
+
+# Feature importance
+importance(rf_model)
+varImpPlot(rf_model)
+
+# Making predictions
+predictions <- predict(rf_model, newdata = test_data)
+
+# Evaluating performance
+confusion_matrix <- table(Actual = test_data$y, Predicted = predictions)
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+print(accuracy)</code></pre>
+            </div>
+            
+            <div class="biotech-example">
+                <p><strong>Biotechnology Application:</strong> In drug discovery, random forests are used to predict compound activity against target proteins, with feature importance helping identify key molecular properties that contribute to binding affinity.</p>
+            </div>
+            
+            <h3>Support Vector Machines (SVM)</h3>
+            <p>SVM finds the optimal hyperplane that maximizes the margin between classes, making it effective for high-dimensional data.</p>
+            
+            <div class="code-block">
+                <pre><code># Performing SVM classification in R (requires e1071 package)
+# install.packages("e1071")
+library(e1071)
+
+# Assuming data has features X and outcome y
+svm_model <- svm(y ~ ., data = data, kernel = "radial", cost = 1)
+
+# Summary of the model
+summary(svm_model)
+
+# Making predictions
+predictions <- predict(svm_model, newdata = test_data)
+
+# Evaluating performance
+confusion_matrix <- table(Actual = test_data$y, Predicted = predictions)
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+print(accuracy)</code></pre>
+            </div>
+            
+            <div class="biotech-example">
+                <p><strong>Biotechnology Application:</strong> In proteomics, SVM is used to classify protein samples based on mass spectrometry data, helping identify disease-specific protein signatures.</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Model Evaluation and Selection</h2>
+            
+            <h3>Classification Metrics</h3>
+            <p>Several metrics are used to evaluate classification models:</p>
+            
+            <table>
+                <tr>
+                    <th>Metric</th>
+                    <th>Formula</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Accuracy</strong></td>
+                    <td>\(\frac{TP + TN}{TP + TN + FP + FN}\)</td>
+                    <td>Proportion of correctly classified instances</td>
+                </tr>
+                <tr>
+                    <td><strong>Precision</strong></td>
+                    <td>\(\frac{TP}{TP + FP}\)</td>
+                    <td>Proportion of positive predictions that are correct</td>
+                </tr>
+                <tr>
+                    <td><strong>Recall (Sensitivity)</strong></td>
+                    <td>\(\frac{TP}{TP + FN}\)</td>
+                    <td>Proportion of actual positives correctly identified</td>
+                </tr>
+                <tr>
+                    <td><strong>F1 Score</strong></td>
+                    <td>\(2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}\)</td>
+                    <td>Harmonic mean of precision and recall</td>
+                </tr>
+                <tr>
+                    <td><strong>ROC Curve & AUC</strong></td>
+                    <td>Plot of TPR vs. FPR at various thresholds</td>
+                    <td>Measures model performance across different classification thresholds</td>
+                </tr>
+            </table>
+            
+            <div class="code-block">
+                <pre><code># Calculating classification metrics in R (requires caret package)
+# install.packages("caret")
+library(caret)
+
+# Assuming we have predictions and actual values
+confusion_matrix <- confusionMatrix(predictions, test_data$y)
+
+# Accessing metrics
+accuracy <- confusion_matrix$overall["Accuracy"]
+precision <- confusion_matrix$byClass["Pos Pred Value"]
+recall <- confusion_matrix$byClass["Sensitivity"]
+f1 <- confusion_matrix$byClass["F1"]
+
+# ROC curve and AUC (requires pROC package)
+# install.packages("pROC")
+library(pROC)
+roc_curve <- roc(test_data$y, predictions_prob)
+auc <- auc(roc_curve)
+plot(roc_curve)</code></pre>
+            </div>
+            
+            <h3>Cross-Validation</h3>
+            <p>Cross-validation helps assess model performance and prevent overfitting:</p>
+            
+            <div class="code-block">
+                <pre><code># Performing k-fold cross-validation in R (requires caret package)
+# install.packages("caret")
+library(caret)
+
+# Setting up cross-validation
+ctrl <- trainControl(
+  method = "cv",
+  number = 10,
+  classProbs = TRUE,
+  summaryFunction = twoClassSummary
+)
+
+# Training model with cross-validation
+cv_model <- train(y ~ ., data = data, method = "rf", trControl = ctrl)
+
+# Results
+print(cv_model)</code></pre>
+            </div>
+            
+            <h3>Hyperparameter Tuning</h3>
+            <p>Hyperparameter tuning finds the optimal parameters for a model:</p>
+            
+            <div class="code-block">
+                <pre><code># Tuning hyperparameters in R (requires caret package)
+# install.packages("caret")
+library(caret)
+
+# Setting up grid search
+grid <- expand.grid(mtry = c(2, 4, 6, 8, 10))
+
+# Tuning with cross-validation
+tuned_model <- train(y ~ ., data = data, method = "rf", 
+                    trControl = ctrl, tuneGrid = grid)
+
+# Results
+print(tuned_model)
+plot(tuned_model)</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Advanced Topics</h2>
+            
+            <h3>Neural Networks and Deep Learning</h3>
+            <p>Neural networks are models inspired by the human brain, capable of learning complex patterns in data.</p>
+            
+            <div class="code-block">
+                <pre><code># Implementing neural networks in R (requires neuralnet package)
+# install.packages("neuralnet")
+library(neuralnet)
+
+# Assuming data has features X and outcome y
+nn_model <- neuralnet(y ~ ., data = data, hidden = c(5, 3), 
+                     linear.output = FALSE, threshold = 0.01)
+
+# Visualization
+plot(nn_model)
+
+# Making predictions
+predictions <- compute(nn_model, test_data[, -which(names(test_data) == "y")])
+predicted_classes <- ifelse(predictions$net.result > 0.5, 1, 0)</code></pre>
+            </div>
+            
+            <div class="biotech-example">
+                <p><strong>Biotechnology Application:</strong> In genomics, deep learning models are used to predict gene expression from DNA sequence, helping understand transcriptional regulation and identify potential therapeutic targets.</p>
+            </div>
+            
+            <h3>Feature Selection</h3>
+            <p>Feature selection identifies the most important variables for prediction:</p>
+            
+            <div class="code-block">
+                <pre><code># Feature selection in R (requires caret package)
+# install.packages("caret")
+library(caret)
+
+# Recursive Feature Elimination (RFE)
+ctrl <- rfeControl(functions = rfFuncs, method = "cv", number = 10)
+rfe_result <- rfe(data[, -which(names(data) == "y")], data$y, 
+                 sizes = c(1:10), rfeControl = ctrl)
+
+# Results
+print(rfe_result)
+plot(rfe_result)
+
+# Selected features
+selected_features <- predictors(rfe_result)</code></pre>
+            </div>
+            
+            <h3>Ensemble Methods</h3>
+            <p>Ensemble methods combine multiple models to improve performance:</p>
+            
+            <div class="code-block">
+                <pre><code># Implementing ensemble methods in R (requires caretEnsemble package)
+# install.packages("caretEnsemble")
+library(caretEnsemble)
+
+# Training multiple models
+models <- caretList(y ~ ., data = data, 
+                   trControl = ctrl,
+                   methodList = c("rf", "glm", "svmRadial"))
+
+# Creating an ensemble
+ensemble <- caretEnsemble(models)
+
+# Summary
+summary(ensemble)
+
+# Making predictions
+predictions <- predict(ensemble, newdata = test_data)</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Practical Implementation in R</h2>
+            
+            <h3>Complete Workflow Example</h3>
+            <p>Here's a complete workflow for a typical biostatistics machine learning project:</p>
+            
+            <div class="code-block">
+                <pre><code># Load required packages
+library(tidyverse)
+library(caret)
+library(randomForest)
+library(pROC)
+library(Rtsne)
+
+# 1. Data Import and Preprocessing
+data <- read.csv("biotech_data.csv")
+
+# Check for missing values
+sum(is.na(data))
+data <- na.omit(data)  # Or use imputation
+
+# Scale numeric features
+data_scaled <- scale(data[, -which(names(data) == "outcome")])
+data_scaled <- as.data.frame(data_scaled)
+data_scaled$outcome <- data$outcome
+
+# 2. Data Splitting
+set.seed(123)
+train_idx <- createDataPartition(data_scaled$outcome, p = 0.7, list = FALSE)
+train_data <- data_scaled[train_idx, ]
+test_data <- data_scaled[-train_idx, ]
+
+# 3. Dimensionality Reduction (for visualization)
+tsne_result <- Rtsne(train_data[, -which(names(train_data) == "outcome")], 
+                     perplexity = 30, theta = 0.5, dims = 2)
+plot(tsne_result$Y, col = train_data$outcome, pch = 16, 
+     xlab = "t-SNE dimension 1", ylab = "t-SNE dimension 2")
+
+# 4. Model Training with Cross-Validation
+ctrl <- trainControl(
+  method = "cv",
+  number = 10,
+  classProbs = TRUE,
+  summaryFunction = twoClassSummary
+)
+
+# Train multiple models
+rf_model <- train(outcome ~ ., data = train_data, method = "rf", trControl = ctrl)
+svm_model <- train(outcome ~ ., data = train_data, method = "svmRadial", trControl = ctrl)
+glm_model <- train(outcome ~ ., data = train_data, method = "glm", trControl = ctrl)
+
+# Compare models
+models <- list(RF = rf_model, SVM = svm_model, GLM = glm_model)
+resamples <- resamples(models)
+summary(resamples)
+dotplot(resamples)
+
+# 5. Model Evaluation
+# Select the best model (e.g., random forest)
+best_model <- rf_model
+
+# Make predictions
+predictions <- predict(best_model, newdata = test_data)
+predictions_prob <- predict(best_model, newdata = test_data, type = "prob")[, 2]
+
+# Calculate metrics
+confusion_matrix <- confusionMatrix(predictions, test_data$outcome)
+print(confusion_matrix)
+
+# ROC curve
+roc_curve <- roc(test_data$outcome, predictions_prob)
+auc <- auc(roc_curve)
+plot(roc_curve, main = paste("ROC Curve (AUC =", round(auc, 3), ")"))
+
+# 6. Feature Importance
+importance <- varImp(best_model)
+plot(importance)
+
+# 7. Final Model for Deployment
+final_model <- randomForest(outcome ~ ., data = data_scaled, 
+                          ntree = 500, mtry = best_model$bestTune$mtry)
+saveRDS(final_model, "final_model.rds")</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Best Practices and Tips</h2>
+            
+            <div class="tip">
+                <p><strong>Data Preprocessing Tips:</strong></p>
+                <ul>
+                    <li>Always check for and handle missing values</li>
+                    <li>Scale or normalize features when using distance-based algorithms</li>
+                    <li>Encode categorical variables appropriately</li>
+                    <li>Check for class imbalance and consider techniques like oversampling or SMOTE</li>
+                    <li>Remove or handle outliers that could skew your results</li>
+                </ul>
+            </div>
+            
+            <div class="tip">
+                <p><strong>Model Selection Tips:</strong></p>
+                <ul>
+                    <li>Start with simpler models before moving to complex ones</li>
+                    <li>Use cross-validation to prevent overfitting</li>
+                    <li>Consider interpretability requirements when choosing models</li>
+                    <li>Evaluate models using multiple metrics, not just accuracy</li>
+                    <li>Document your model selection process and rationale</li>
+                </ul>
+            </div>
+            
+            <div class="tip">
+                <p><strong>Biostatistics-Specific Tips:</strong></p>
+                <ul>
+                    <li>Consider the biological relevance of your features and results</li>
+                    <li>Account for batch effects in high-throughput data</li>
+                    <li>Validate findings using independent datasets when possible</li>
+                    <li>Consider the clinical utility of your predictions</li>
+                    <li>Collaborate with domain experts to interpret results</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Resources for Learning Machine Learning in Biostatistics</h2>
+            
+            <ul>
+                <li><a href="https://www.bioconductor.org/" target="_blank">Bioconductor</a> - R packages for genomic data analysis</li>
+                <li><a href="https://www.nature.com/articles/s41592-018-0295-5" target="_blank">Nature Methods: Machine Learning for Biologists</a></li>
+                <li><a href="https://www.coursera.org/specializations/biostatistics" target="_blank">Coursera: Biostatistics Specialization</a></li>
+                <li><a href="https://www.edx.org/course/statistical-learning" target="_blank">edX: Statistical Learning</a></li>
+                <li><a href="https://www.r-bloggers.com/" target="_blank">R-bloggers</a> - R tutorials and news</li>
+                <li><a href="https://www.kaggle.com/competitions" target="_blank">Kaggle</a> - Data science competitions and datasets</li>
+                <li><a href="https://www.bioinformatics.org/" target="_blank">Bioinformatics.org</a> - Resources for bioinformatics</li>
+                <li><a href="https://www.plos.org/" target="_blank">PLOS</a> - Open access journals with machine learning in biology</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Essential R for Statistics</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .code-block {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 15px 0;
+        }
+        .output-block {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 15px 0;
+        }
+        .note {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-left: 4px solid #4caf50;
+            margin: 15px 0;
+        }
+        .warning {
+            background-color: #fff3e0;
+            padding: 15px;
+            border-left: 4px solid #ff9800;
+            margin: 15px 0;
+        }
+        .tip {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196f3;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .formula {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.2em;
+        }
+        .interactive {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f0f7ff;
+            border-radius: 8px;
+            border: 1px solid #cce5ff;
+        }
+        .chart-container {
+            margin: 20px 0;
+            height: 400px;
+            position: relative;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            margin-right: 15px;
+        }
+        .quiz {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f9f0ff;
+            border-radius: 8px;
+            border: 1px solid #e6ccff;
+        }
+        .question {
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options {
+            margin-left: 20px;
+        }
+        .option {
+            margin: 10px 0;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .option:hover {
+            background-color: #f0e6ff;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .explanation {
+            margin-top: 10px;
+            font-style: italic;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Essential R for Statistics</h1>
+        
+        <div class="section">
+            <h2>Introduction to R</h2>
+            <p>R is a powerful programming language and environment for statistical computing and graphics. It provides a wide variety of statistical and graphical techniques, and is highly extensible.</p>
+            
+            <div class="note">
+                <p><strong>Why R for Statistics?</strong></p>
+                <ul>
+                    <li>Comprehensive statistical tools</li>
+                    <li>Excellent visualization capabilities</li>
+                    <li>Active community and extensive packages</li>
+                    <li>Reproducible research support</li>
+                    <li>Free and open-source</li>
+                </ul>
+            </div>
+            
+            <h3>Getting Started with R</h3>
+            <p>To get started with R, you need to:</p>
+            <ol>
+                <li>Install R from <a href="https://cran.r-project.org/" target="_blank">CRAN</a></li>
+                <li>Install RStudio (recommended IDE) from <a href="https://www.rstudio.com/products/rstudio/download/" target="_blank">RStudio website</a></li>
+                <li>Install essential packages</li>
+            </ol>
+            
+            <div class="code-block">
+                <pre><code># Install essential packages
+install.packages(c("tidyverse", "ggplot2", "dplyr", "tidyr", "readr", "lubridate", 
+                  "knitr", "rmarkdown", "shiny", "caret", "broom", "scales"))
+
+# Load packages
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(readr)
+library(lubridate)
+library(knitr)
+library(rmarkdown)
+library(shiny)
+library(caret)
+library(broom)
+library(scales)</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Data Import and Manipulation</h2>
+            
+            <h3>Importing Data</h3>
+            <p>R can import data from various file formats:</p>
+            
+            <div class="code-block">
+                <pre><code># CSV files
+data_csv <- read.csv("file.csv")
+data_csv <- read_csv("file.csv")  # from readr package (faster)
+
+# Excel files (requires readxl package)
+# install.packages("readxl")
+library(readxl)
+data_excel <- read_excel("file.xlsx", sheet = 1)
+
+# SPSS, SAS, Stata files (requires haven package)
+# install.packages("haven")
+library(haven)
+data_spss <- read_sav("file.sav")
+data_sas <- read_sas("file.sas7bdat")
+data_stata <- read_dta("file.dta")
+
+# Text files
+data_txt <- read.table("file.txt", header = TRUE, sep = "\t")
+data_txt <- read_delim("file.txt", delim = "\t")  # from readr package</code></pre>
+            </div>
+            
+            <h3>Data Manipulation with dplyr</h3>
+            <p>The dplyr package provides a set of functions for data manipulation:</p>
+            
+            <div class="code-block">
+                <pre><code># Filter rows
+filtered_data <- filter(data, column > 10, another_column == "value")
+
+# Select columns
+selected_data <- select(data, column1, column2, column3)
+
+# Arrange rows
+arranged_data <- arrange(data, desc(column))  # descending order
+
+# Create new columns
+mutated_data <- mutate(data, new_column = column1 * column2)
+
+# Summarize data
+summarized_data <- summarize(data, 
+                            mean_value = mean(column, na.rm = TRUE),
+                            sd_value = sd(column, na.rm = TRUE))
+
+# Group by and then summarize
+grouped_summary <- data %>%
+  group_by(group_column) %>%
+  summarize(
+    count = n(),
+    mean = mean(value_column, na.rm = TRUE),
+    sd = sd(value_column, na.rm = TRUE)
+  )</code></pre>
+            </div>
+            
+            <h3>Data Reshaping with tidyr</h3>
+            <p>The tidyr package helps reshape data for analysis:</p>
+            
+            <div class="code-block">
+                <pre><code># Wide to long format
+long_data <- pivot_longer(data, 
+                         cols = c(column1, column2, column3),
+                         names_to = "variable",
+                         values_to = "value")
+
+# Long to wide format
+wide_data <- pivot_wider(data,
+                        id_cols = id_column,
+                        names_from = variable_column,
+                        values_from = value_column)
+
+# Separate a column
+separated_data <- separate(data, 
+                          col = combined_column,
+                          into = c("column1", "column2"),
+                          sep = "-")
+
+# Unite columns
+united_data <- unite(data,
+                    col = new_column,
+                    column1, column2, column3,
+                    sep = "-")</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Data Visualization</h2>
+            
+            <h3>Base R Graphics</h3>
+            <p>R's base graphics system provides simple plotting functions:</p>
+            
+            <div class="code-block">
+                <pre><code># Scatter plot
+plot(x = data$column1, y = data$column2,
+     main = "Scatter Plot",
+     xlab = "X Axis",
+     ylab = "Y Axis",
+     col = "blue",
+     pch = 16)
+
+# Histogram
+hist(data$column,
+     main = "Histogram",
+     xlab = "Value",
+     col = "lightblue",
+     breaks = 20)
+
+# Box plot
+boxplot(data$column ~ data$group,
+        main = "Box Plot",
+        xlab = "Group",
+        ylab = "Value",
+        col = "lightgreen")
+
+# Bar plot
+barplot(table(data$categorical_column),
+        main = "Bar Plot",
+        xlab = "Category",
+        ylab = "Count",
+        col = "lightcoral")</code></pre>
+            </div>
+            
+            <h3>ggplot2 for Advanced Visualization</h3>
+            <p>ggplot2 is a powerful visualization package based on the Grammar of Graphics:</p>
+            
+            <div class="code-block">
+                <pre><code># Scatter plot
+ggplot(data, aes(x = column1, y = column2)) +
+  geom_point(color = "blue", size = 3) +
+  geom_smooth(method = "lm", color = "red", se = TRUE) +
+  labs(title = "Scatter Plot with Regression Line",
+       x = "X Axis",
+       y = "Y Axis") +
+  theme_minimal()
+
+# Histogram
+ggplot(data, aes(x = column)) +
+  geom_histogram(bins = 20, fill = "lightblue", color = "black") +
+  labs(title = "Histogram",
+       x = "Value",
+       y = "Count") +
+  theme_minimal()
+
+# Box plot
+ggplot(data, aes(x = group, y = value, fill = group)) +
+  geom_boxplot() +
+  labs(title = "Box Plot",
+       x = "Group",
+       y = "Value") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Bar plot
+ggplot(data, aes(x = categorical_column)) +
+  geom_bar(fill = "lightcoral") +
+  labs(title = "Bar Plot",
+       x = "Category",
+       y = "Count") +
+  theme_minimal()</code></pre>
+            </div>
+            
+            <h3>Faceting and Multiple Plots</h3>
+            <p>ggplot2 allows creating multiple plots based on a variable:</p>
+            
+            <div class="code-block">
+                <pre><code># Facet by a categorical variable
+ggplot(data, aes(x = column1, y = column2)) +
+  geom_point() +
+  facet_wrap(~ group) +
+  labs(title = "Faceted Scatter Plots") +
+  theme_minimal()
+
+# Facet by two variables
+ggplot(data, aes(x = column1, y = column2)) +
+  geom_point() +
+  facet_grid(row_var ~ col_var) +
+  labs(title = "Faceted Scatter Plots") +
+  theme_minimal()</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Descriptive Statistics</h2>
+            
+            <h3>Summary Statistics</h3>
+            <p>R provides functions for calculating summary statistics:</p>
+            
+            <div class="code-block">
+                <pre><code># Basic summary
+summary(data$column)
+
+# Mean, median, mode
+mean(data$column, na.rm = TRUE)
+median(data$column, na.rm = TRUE)
+# Mode (no built-in function)
+getmode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+getmode(data$column)
+
+# Variance and standard deviation
+var(data$column, na.rm = TRUE)
+sd(data$column, na.rm = TRUE)
+
+# Quantiles
+quantile(data$column, probs = c(0.25, 0.5, 0.75), na.rm = TRUE)
+
+# Range
+range(data$column, na.rm = TRUE)
+min(data$column, na.rm = TRUE)
+max(data$column, na.rm = TRUE)
+
+# Interquartile range
+IQR(data$column, na.rm = TRUE)</code></pre>
+            </div>
+            
+            <h3>Correlation Analysis</h3>
+            <p>R provides functions for correlation analysis:</p>
+            
+            <div class="code-block">
+                <pre><code># Pearson correlation
+cor(data$column1, data$column2, method = "pearson")
+
+# Spearman correlation
+cor(data$column1, data$column2, method = "spearman")
+
+# Kendall correlation
+cor(data$column1, data$column2, method = "kendall")
+
+# Correlation matrix
+cor_matrix <- cor(data[, c("column1", "column2", "column3")], 
+                 method = "pearson")
+
+# Correlation test
+cor.test(data$column1, data$column2, method = "pearson")</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Statistical Tests</h2>
+            
+            <h3>T-Tests</h3>
+            <p>R provides functions for various t-tests:</p>
+            
+            <div class="code-block">
+                <pre><code># One-sample t-test
+t.test(data$column, mu = 0)
+
+# Two-sample t-test (independent)
+t.test(data$column1, data$column2)
+
+# Paired t-test
+t.test(data$column1, data$column2, paired = TRUE)
+
+# Welch's t-test (unequal variances)
+t.test(data$column1, data$column2, var.equal = FALSE)</code></pre>
+            </div>
+            
+            <h3>Analysis of Variance (ANOVA)</h3>
+            <p>R provides functions for ANOVA:</p>
+            
+            <div class="code-block">
+                <pre><code># One-way ANOVA
+aov_result <- aov(value ~ group, data = data)
+summary(aov_result)
+
+# Two-way ANOVA
+aov_result <- aov(value ~ group1 * group2, data = data)
+summary(aov_result)
+
+# Post-hoc tests
+# Tukey's HSD
+TukeyHSD(aov_result)
+
+# Pairwise t-tests with Bonferroni correction
+pairwise.t.test(data$value, data$group, p.adjust.method = "bonferroni")</code></pre>
+            </div>
+            
+            <h3>Chi-Square Tests</h3>
+            <p>R provides functions for chi-square tests:</p>
+            
+            <div class="code-block">
+                <pre><code># Chi-square test of independence
+chisq.test(table(data$column1, data$column2))
+
+# Chi-square goodness of fit
+chisq.test(table(data$column), p = c(0.25, 0.25, 0.25, 0.25))</code></pre>
+            </div>
+            
+            <h3>Non-parametric Tests</h3>
+            <p>R provides functions for non-parametric tests:</p>
+            
+            <div class="code-block">
+                <pre><code># Wilcoxon rank-sum test (Mann-Whitney U test)
+wilcox.test(data$column1, data$column2)
+
+# Wilcoxon signed-rank test
+wilcox.test(data$column1, data$column2, paired = TRUE)
+
+# Kruskal-Wallis test
+kruskal.test(value ~ group, data = data)
+
+# Friedman rank sum test
+friedman.test(value ~ group | block, data = data)</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Regression Analysis</h2>
+            
+            <h3>Linear Regression</h3>
+            <p>R provides functions for linear regression:</p>
+            
+            <div class="code-block">
+                <pre><code># Simple linear regression
+lm_model <- lm(y ~ x, data = data)
+summary(lm_model)
+coef(lm_model)
+confint(lm_model)
+plot(lm_model)  # Diagnostic plots
+
+# Multiple linear regression
+lm_model <- lm(y ~ x1 + x2 + x3, data = data)
+summary(lm_model)
+
+# Interaction terms
+lm_model <- lm(y ~ x1 * x2, data = data)
+summary(lm_model)
+
+# Polynomial regression
+lm_model <- lm(y ~ poly(x, degree = 2), data = data)
+summary(lm_model)</code></pre>
+            </div>
+            
+            <h3>Logistic Regression</h3>
+            <p>R provides functions for logistic regression:</p>
+            
+            <div class="code-block">
+                <pre><code># Binary logistic regression
+glm_model <- glm(outcome ~ predictor1 + predictor2, 
+                 family = binomial(link = "logit"), 
+                 data = data)
+summary(glm_model)
+coef(glm_model)
+confint(glm_model)
+
+# Multinomial logistic regression (requires nnet package)
+# install.packages("nnet")
+library(nnet)
+multinom_model <- multinom(outcome ~ predictor1 + predictor2, data = data)
+summary(multinom_model)</code></pre>
+            </div>
+            
+            <h3>Model Diagnostics</h3>
+            <p>R provides functions for model diagnostics:</p>
+            
+            <div class="code-block">
+                <pre><code># Residuals
+residuals(lm_model)
+rstandard(lm_model)
+rstudent(lm_model)
+
+# Influence measures
+influence.measures(lm_model)
+cooks.distance(lm_model)
+dfbetas(lm_model)
+dffits(lm_model)
+
+# Model selection
+# AIC
+AIC(lm_model1, lm_model2)
+
+# BIC
+BIC(lm_model1, lm_model2)
+
+# Stepwise regression
+step_model <- step(lm_model, direction = "both")</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Advanced Statistical Methods</h2>
+            
+            <h3>Principal Component Analysis (PCA)</h3>
+            <p>R provides functions for PCA:</p>
+            
+            <div class="code-block">
+                <pre><code># PCA
+pca_result <- prcomp(data[, c("column1", "column2", "column3")], 
+                    scale. = TRUE)
+summary(pca_result)
+pca_result$rotation
+pca_result$x
+
+# Visualization
+biplot(pca_result)
+plot(pca_result)
+screeplot(pca_result)</code></pre>
+            </div>
+            
+            <h3>Factor Analysis</h3>
+            <p>R provides functions for factor analysis:</p>
+            
+            <div class="code-block">
+                <pre><code># Exploratory Factor Analysis
+# install.packages("psych")
+library(psych)
+fa_result <- fa(data[, c("column1", "column2", "column3")], 
+                nfactors = 2, 
+                rotate = "varimax")
+summary(fa_result)
+fa_result$loadings
+
+# Confirmatory Factor Analysis (requires lavaan package)
+# install.packages("lavaan")
+library(lavaan)
+cfa_model <- '
+  factor1 =~ column1 + column2 + column3
+  factor2 =~ column4 + column5 + column6
+'
+cfa_result <- cfa(cfa_model, data = data)
+summary(cfa_result)</code></pre>
+            </div>
+            
+            <h3>Cluster Analysis</h3>
+            <p>R provides functions for cluster analysis:</p>
+            
+            <div class="code-block">
+                <pre><code># Hierarchical clustering
+dist_matrix <- dist(data[, c("column1", "column2", "column3")])
+hc_result <- hclust(dist_matrix, method = "ward.D2")
+plot(hc_result)
+cutree(hc_result, k = 3)
+
+# K-means clustering
+kmeans_result <- kmeans(data[, c("column1", "column2", "column3")], 
+                       centers = 3)
+kmeans_result$cluster
+kmeans_result$centers
+
+# DBSCAN clustering (requires dbscan package)
+# install.packages("dbscan")
+library(dbscan)
+dbscan_result <- dbscan(data[, c("column1", "column2", "column3")], 
+                       eps = 0.5, 
+                       minPts = 5)
+dbscan_result$cluster</code></pre>
+            </div>
+            
+            <h3>Time Series Analysis</h3>
+            <p>R provides functions for time series analysis:</p>
+            
+            <div class="code-block">
+                <pre><code># Create time series object
+ts_data <- ts(data$value, frequency = 12, start = c(2020, 1))
+
+# Decomposition
+decomp <- decompose(ts_data)
+plot(decomp)
+
+# Forecasting (requires forecast package)
+# install.packages("forecast")
+library(forecast)
+# Exponential smoothing
+ets_model <- ets(ts_data)
+forecast_result <- forecast(ets_model, h = 12)
+plot(forecast_result)
+
+# ARIMA
+arima_model <- auto.arima(ts_data)
+forecast_result <- forecast(arima_model, h = 12)
+plot(forecast_result)</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Reproducible Research with R Markdown</h2>
+            
+            <p>R Markdown allows you to create dynamic documents that combine code, output, and text:</p>
+            
+            <div class="code-block">
+                <pre><code>---
+title: "Statistical Analysis Report"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cosmo
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(ggplot2)
+```
+
+## Introduction
+
+This report presents the results of our statistical analysis.
+
+## Data Import
+
+```{r data_import}
+data <- read_csv("data.csv")
+head(data)
+```
+
+## Exploratory Data Analysis
+
+```{r eda}
+summary(data)
+ggplot(data, aes(x = predictor, y = outcome)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_minimal()
+```
+
+## Statistical Analysis
+
+```{r analysis}
+model <- lm(outcome ~ predictor, data = data)
+summary(model)
+```
+
+## Conclusion
+
+Based on our analysis, we found...</code></pre>
+            </div>
+            
+            <h3>Creating Interactive Documents with Shiny</h3>
+            <p>Shiny allows you to create interactive web applications with R:</p>
+            
+            <div class="code-block">
+                <pre><code># ui.R
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Interactive Statistical Analysis"),
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("bins", "Number of bins:", min = 1, max = 50, value = 30),
+      selectInput("variable", "Select variable:", 
+                  choices = names(data))
+    ),
+    mainPanel(
+      plotOutput("histogram"),
+      verbatimTextOutput("summary")
+    )
+  )
+)
+
+# server.R
+server <- function(input, output) {
+  output$histogram <- renderPlot({
+    ggplot(data, aes_string(x = input$variable)) +
+      geom_histogram(bins = input$bins, fill = "steelblue", color = "black") +
+      theme_minimal()
+  })
+  
+  output$summary <- renderPrint({
+    summary(data[[input$variable]])
+  })
+}
+
+# Run the app
+shinyApp(ui = ui, server = server)</code></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Best Practices and Tips</h2>
+            
+            <div class="tip">
+                <p><strong>Data Management Tips:</strong></p>
+                <ul>
+                    <li>Always check your data for missing values and outliers</li>
+                    <li>Use meaningful variable names</li>
+                    <li>Document your code with comments</li>
+                    <li>Save your data in a standard format (CSV, RDS)</li>
+                    <li>Use version control (Git) for your projects</li>
+                </ul>
+            </div>
+            
+            <div class="tip">
+                <p><strong>Statistical Analysis Tips:</strong></p>
+                <ul>
+                    <li>Always check assumptions before applying statistical tests</li>
+                    <li>Use appropriate effect size measures along with p-values</li>
+                    <li>Consider multiple testing corrections when conducting multiple tests</li>
+                    <li>Visualize your data before and after analysis</li>
+                    <li>Report confidence intervals along with point estimates</li>
+                </ul>
+            </div>
+            
+            <div class="tip">
+                <p><strong>Reproducibility Tips:</strong></p>
+                <ul>
+                    <li>Set random seeds for reproducibility</li>
+                    <li>Use R Markdown for documentation</li>
+                    <li>Create a project with all dependencies</li>
+                    <li>Use the renv package for package management</li>
+                    <li>Share your code and data when possible</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Resources for Learning R</h2>
+            
+            <ul>
+                <li><a href="https://www.r-project.org/" target="_blank">R Project Website</a></li>
+                <li><a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.html" target="_blank">An Introduction to R</a></li>
+                <li><a href="https://r4ds.had.co.nz/" target="_blank">R for Data Science</a></li>
+                <li><a href="https://www.tidyverse.org/" target="_blank">Tidyverse</a></li>
+                <li><a href="https://ggplot2.tidyverse.org/" target="_blank">ggplot2</a></li>
+                <li><a href="https://dplyr.tidyverse.org/" target="_blank">dplyr</a></li>
+                <li><a href="https://rmarkdown.rstudio.com/" target="_blank">R Markdown</a></li>
+                <li><a href="https://shiny.rstudio.com/" target="_blank">Shiny</a></li>
+                <li><a href="https://www.rstudio.com/resources/cheatsheets/" target="_blank">RStudio Cheatsheets</a></li>
+                <li><a href="https://www.datacamp.com/courses/free-introduction-to-r" target="_blank">DataCamp Free R Course</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 

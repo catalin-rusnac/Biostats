@@ -6,8 +6,8 @@
     <title>Biostatistics 2025</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
             margin: 40px auto;
             padding: 20px;
             background-color: #f5f5f5;
@@ -23,57 +23,165 @@
             margin-bottom: 30px;
             text-align: center;
         }
+        h2 {
+            color: #3498db;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        .category {
+            margin-bottom: 40px;
+        }
         .file-list {
             list-style: none;
             padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
         }
         .file-item {
-            margin: 10px 0;
-            padding: 15px;
+            padding: 20px;
             background-color: #f8f9fa;
-            border-radius: 4px;
-            transition: background-color 0.2s;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #eee;
         }
         .file-item:hover {
-            background-color: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         .file-link {
             color: #2c3e50;
             text-decoration: none;
             font-weight: 500;
             display: block;
+            margin-bottom: 10px;
         }
         .file-link:hover {
             color: #3498db;
         }
         .file-description {
             color: #666;
-            margin-top: 5px;
             font-size: 0.9em;
+            line-height: 1.5;
+        }
+        .external-link {
+            color: #666;
+            font-size: 0.8em;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .slides-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+        .slides-section h2 {
+            color: #2c3e50;
+            border-bottom: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Biostatistics 2025</h1>
-        <ul class="file-list">
-            <li class="file-item">
-                <a href="linear_regression.html" class="file-link">
-                    Linear Regression Calculator
-                </a>
-                <div class="file-description">
-                    Interactive calculator demonstrating linear regression concepts including mean, variance, covariance, correlation, and regression analysis with real-time visualization.
-                </div>
-            </li>
-            <li class="file-item">
-                <a href="https://docs.google.com/presentation/d/1K2TWZZT-abm5hxhWyKcxlJHD9Y4OMSAsmVQMJ8Fa6jQ/edit?usp=sharing" class="file-link" target="_blank">
-                    Biostatistics and Trend Analysis Slides
-                </a>
-                <div class="file-description">
-                    Google Slides presentation covering biostatistics concepts and trend analysis.
-                </div>
-            </li>
-        </ul>
+
+        <div class="category">
+            <h2>Probability and Statistics</h2>
+            <ul class="file-list">
+                <li class="file-item">
+                    <a href="basic_probability.html" class="file-link">
+                        Basic Probability
+                    </a>
+                    <div class="file-description">
+                        Interactive introduction to probability concepts with biotechnology examples, including coin toss simulations, binomial distributions, and normal distributions.
+                    </div>
+                </li>
+                <li class="file-item">
+                    <a href="bayes.html" class="file-link">
+                        Bayesian Probability
+                    </a>
+                    <div class="file-description">
+                        Interactive exploration of Bayesian reasoning in medical testing scenarios, demonstrating how prior probabilities and test accuracy affect diagnostic outcomes.
+                    </div>
+                </li>
+                <li class="file-item">
+                    <a href="chi_square_biostatistics.html" class="file-link">
+                        Chi-square Test
+                    </a>
+                    <div class="file-description">
+                        Interactive slideshow explaining the chi-square test in biostatistics, including practical examples and step-by-step calculations.
+                    </div>
+                </li>
+                <li class="file-item">
+                    <a href="linear_regression.html" class="file-link">
+                        Linear Regression Calculator
+                    </a>
+                    <div class="file-description">
+                        Interactive calculator demonstrating linear regression concepts including mean, variance, covariance, correlation, and regression analysis with real-time visualization.
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h2>Data Analysis and Machine Learning</h2>
+            <ul class="file-list">
+                <li class="file-item">
+                    <a href="biostatistics_ml_concepts.html" class="file-link">
+                        Machine Learning Concepts
+                    </a>
+                    <div class="file-description">
+                        Comprehensive guide to machine learning concepts in biostatistics, including PCA, random forests, and distance metrics.
+                    </div>
+                </li>
+                <li class="file-item">
+                    <a href="llm_concepts.html" class="file-link">
+                        Large Language Models (LLMs)
+                    </a>
+                    <div class="file-description">
+                        Understanding LLMs, word embeddings, and practical tips for using language models in statistical analysis.
+                    </div>
+                </li>
+                <li class="file-item">
+                    <a href="ml_classification.html" class="file-link">
+                        Machine Learning Classification
+                    </a>
+                    <div class="file-description">
+                        Interactive guide to classification algorithms, including training process, gradient descent, loss functions, and model evaluation.
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h2>Programming and Tools</h2>
+            <ul class="file-list">
+                <li class="file-item">
+                    <a href="essential_r_statistics.html" class="file-link">
+                        Essential R for Statistics
+                    </a>
+                    <div class="file-description">
+                        Comprehensive guide to using R for statistical analysis, including data manipulation, visualization, and statistical tests.
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="slides-section">
+            <h2>Additional Resources</h2>
+            <ul class="file-list">
+                <li class="file-item">
+                    <a href="https://docs.google.com/presentation/d/1K2TWZZT-abm5hxhWyKcxlJHD9Y4OMSAsmVQMJ8Fa6jQ/edit?usp=sharing" class="file-link" target="_blank">
+                        Biostatistics and Trend Analysis Slides
+                    </a>
+                    <div class="file-description">
+                        Google Slides presentation covering biostatistics concepts and trend analysis.
+                    </div>
+                    <span class="external-link">(Opens in new tab)</span>
+                </li>
+            </ul>
+        </div>
     </div>
 </body>
 </html> 
