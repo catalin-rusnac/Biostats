@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Probability for Biotechnology</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .formula {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+        }
+        .formula-display {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+        .description {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        .interactive {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+        }
+        .chart-container {
+            margin: 20px 0;
+            height: 300px;
+            position: relative;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            margin-right: 15px;
+        }
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="range"] {
+            width: 200px;
+        }
+        .value-display {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f1f8e9;
+            border-radius: 4px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .data-table th {
+            background-color: #f2f2f2;
+        }
+        .example {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-radius: 4px;
+            border-left: 4px solid #ff9800;
+        }
+        .example-title {
+            font-weight: bold;
+            color: #e65100;
+            margin-bottom: 10px;
+        }
+        .venn-diagram {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .venn-container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            margin: 0 auto;
+        }
+        .venn-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+        .venn-label {
+            position: absolute;
+            font-weight: bold;
+        }
+        .venn-intersection {
+            position: absolute;
+            font-weight: bold;
+            color: #333;
+        }
+        .quiz-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .quiz-question {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .quiz-options {
+            margin: 10px 0;
+        }
+        .quiz-option {
+            display: block;
+            margin: 8px 0;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .quiz-option:hover {
+            background-color: #e9ecef;
+        }
+        .quiz-option.selected {
+            background-color: #cce5ff;
+            border-color: #b8daff;
+        }
+        .quiz-option.correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .quiz-option.incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .quiz-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .quiz-feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        .quiz-feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        .quiz-submit {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .quiz-submit:hover {
+            background-color: #2980b9;
+        }
+        .quiz-submit:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .quiz-explanation {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #fff3cd;
+            border-radius: 4px;
+            display: none;
+        }
+        .biotech-example {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+            border-left: 4px solid #4caf50;
+        }
+        .biotech-example-title {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Basic Probability for Biotechnology</h1>
+        
+        <div class="section">
+            <h2>Introduction to Probability</h2>
+            <p class="description">Probability is the branch of mathematics that deals with the analysis of random phenomena. In biotechnology, probability concepts are essential for understanding experimental outcomes, genetic inheritance, and statistical analysis of biological data.</p>
+            
+            <div class="formula">
+                <p>Basic Probability Formula:</p>
+                <div class="formula-display">\(P(A) = \frac{\text{Number of favorable outcomes}}{\text{Total number of possible outcomes}}\)</div>
+                <p>Where \(P(A)\) is the probability of event A occurring.</p>
+            </div>
+            
+            <div class="biotech-example">
+                <div class="biotech-example-title">Biotech Application: PCR Amplification</div>
+                <p>In polymerase chain reaction (PCR), the probability of successfully amplifying a target DNA sequence depends on various factors. If a PCR reaction has a 95% success rate for each cycle, what is the probability of successful amplification after 30 cycles?</p>
+                <p>This is an example of independent events, where the probability of success in each cycle is independent of previous cycles.</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Sample Space and Events</h2>
+            <p>The sample space (S) is the set of all possible outcomes of an experiment. An event is a subset of the sample space.</p>
+            
+            <div class="formula">
+                <p>Properties of Probability:</p>
+                <ol>
+                    <li>\(0 \leq P(A) \leq 1\) for any event A</li>
+                    <li>\(P(S) = 1\) (the probability of the sample space is 1)</li>
+                    <li>\(P(\emptyset) = 0\) (the probability of an impossible event is 0)</li>
+                </ol>
+            </div>
+            
+            <div class="biotech-example">
+                <div class="biotech-example-title">Biotech Application: Cell Culture Viability</div>
+                <p>In a cell culture experiment, the sample space might include all possible outcomes for cell viability after treatment with a drug. Events could include:</p>
+                <ul>
+                    <li>Event A: Cells remain viable (survival rate > 80%)</li>
+                    <li>Event B: Cells show moderate viability (survival rate 40-80%)</li>
+                    <li>Event C: Cells show low viability (survival rate < 40%)</li>
+                </ul>
+                <p>The sum of probabilities for all possible events equals 1: \(P(A) + P(B) + P(C) = 1\)</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Complementary Events</h2>
+            <p>The complement of an event A, denoted as A' or A<sup>c</sup>, is the event that A does not occur.</p>
+            
+            <div class="formula">
+                <p>Complement Rule:</p>
+                <div class="formula-display">\(P(A') = 1 - P(A)\)</div>
+            </div>
+            
+            <div class="venn-diagram">
+                <h3>Complementary Events</h3>
+                <div class="venn-container">
+                    <div class="venn-circle" id="complementCircle" style="width: 200px; height: 200px; background-color: #3498db; left: 50px; top: 0;"></div>
+                    <div class="venn-label" style="left: 150px; top: 90px;">A</div>
+                    <div class="venn-label" style="left: 50px; top: 90px;">A'</div>
+                </div>
+                <p>Event A and its complement A' together make up the entire sample space.</p>
+            </div>
+            
+            <div class="biotech-example">
+                <div class="biotech-example-title">Biotech Application: Drug Efficacy</div>
+                <p>If the probability of a drug being effective against a particular pathogen is 0.75, then the probability of the drug being ineffective is:</p>
+                <p>\(P(\text{Ineffective}) = 1 - P(\text{Effective}) = 1 - 0.75 = 0.25\)</p>
+                <p>This means there's a 25% chance the drug will not be effective against the pathogen.</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Union and Intersection of Events</h2>
+            <p>The union of events A and B (A ∪ B) is the event that either A or B or both occur. The intersection of events A and B (A ∩ B) is the event that both A and B occur.</p>
+            
+            <div class="formula">
+                <p>Addition Rule:</p>
+                <div class="formula-display">\(P(A \cup B) = P(A) + P(B) - P(A \cap B)\)</div>
+            </div>
+            
+            <div class="venn-diagram">
+                <h3>Union and Intersection</h3>
+                <div class="venn-container">
+                    <div class="venn-circle" style="width: 150px; height: 150px; background-color: #3498db; left: 50px; top: 25px;"></div>
+                    <div class="venn-circle" style="width: 150px; height: 150px; background-color: #e74c3c; left: 150px; top: 25px;"></div>
+                    <div class="venn-label" style="left: 100px; top: 20px;">A</div>
+                    <div class="venn-label" style="left: 200px; top: 20px;">B</div>
+                    <div class="venn-intersection" style="left: 150px; top: 90px;">A ∩ B</div>
+                </div>
+                <p>The shaded area represents the union (A ∪ B), and the overlapping area represents the intersection (A ∩ B).</p>
+            </div>
+            
+            <div class="biotech-example">
+                <div class="biotech-example-title">Biotech Application: Protein Expression</div>
+                <p>In a study of protein expression in cells:</p>
+                <ul>
+                    <li>Event A: Cells express protein X (P(A) = 0.6)</li>
+                    <li>Event B: Cells express protein Y (P(B) = 0.4)</li>
+                    <li>Event A ∩ B: Cells express both proteins (P(A ∩ B) = 0.2)</li>
+                </ul>
+                <p>The probability that cells express either protein X or protein Y or both is:</p>
+                <p>\(P(A \cup B) = P(A) + P(B) - P(A \cap B) = 0.6 + 0.4 - 0.2 = 0.8\)</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Mutually Exclusive Events</h2>
+            <p>Events A and B are mutually exclusive (or disjoint) if they cannot occur simultaneously, meaning \(P(A \cap B) = 0\).</p>
+            
+            <div class="formula">
+                <p>Addition Rule for Mutually Exclusive Events:</p>
+                <div class="formula-display">\(P(A \cup B) = P(A) + P(B)\)</div>
+            </div>
+            
+            <div class="venn-diagram">
+                <h3>Mutually Exclusive Events</h3>
+                <div class="venn-container">
+                    <div class="venn-circle" style="width: 150px; height: 150px; background-color: #3498db; left: 50px; top: 25px;"></div>
+                    <div class="venn-circle" style="width: 150px; height: 150px; background-color: #e74c3c; left: 200px; top: 25px;"></div>
+                    <div class="venn-label" style="left: 100px; top: 20px;">A</div>
+                    <div class="venn-label" style="left: 250px; top: 20px;">B</div>
+                </div>
+                <p>Mutually exclusive events have no overlap (A ∩ B = ∅).</p>
+            </div>
+            
+            <div class="biotech-example">
+                <div class="biotech-example-title">Biotech Application: Cell Cycle Phases</div>
+                <p>In a population of dividing cells, a cell can be in only one phase of the cell cycle at a given time:</p>
+                <ul>
+                    <li>Event A: Cell is in G1 phase (P(A) = 0.4)</li>
+                    <li>Event B: Cell is in S phase (P(B) = 0.3)</li>
+                    <li>Event C: Cell is in G2/M phase (P(C) = 0.3)</li>
+                </ul>
+                <p>These events are mutually exclusive. The probability that a cell is in either G1 or S phase is:</p>
+                <p>\(P(A \cup B) = P(A) + P(B) = 0.4 + 0.3 = 0.7\)</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Independent Events</h2>
+            <p>Events A and B are independent if the occurrence of one event does not affect the probability of the other event occurring.</p>
+            
+            <div class="formula">
+                <p>Multiplication Rule for Independent Events:</p>
+                <div class="formula-display">\(P(A \cap B) = P(A) \times P(B)\)</div>
+            </div>
+            
+            <div class="biotech-example">
+                <div class="biotech-example-title">Biotech Application: Genetic Crosses</div>
+                <p>In Mendelian genetics, the inheritance of one trait is often independent of another trait (assuming they are on different chromosomes or far apart on the same chromosome).</p>
+                <p>If the probability of inheriting allele A is 0.5 and the probability of inheriting allele B is 0.5, then the probability of inheriting both A and B is:</p>
+                <p>\(P(A \cap B) = P(A) \times P(B) = 0.5 \times 0.5 = 0.25\)</p>
+            </div>
+            
+            <div class="interactive">
+                <h3>PCR Amplification Survival Rate</h3>
+                <p>In polymerase chain reaction (PCR), each cycle subjects the DNA polymerase enzyme to high temperatures, leading to a small chance of inactivation. The overall probability of the enzyme remaining active throughout all cycles is the product of the individual probabilities for each cycle.</p>
+                
+                <p>For example, if a DNA polymerase enzyme has a <span id="survivalRateText">99%</span> probability of surviving each cycle, then over the course of <span id="cycleCountText">30</span> cycles, the chance that the enzyme remains active throughout is:</p>
+                <p id="formulaDisplay">\(0.99^{30} \approx 0.7397\) or \(73.97\%\)</p>
+                
+                <p>This means that for a single molecule of DNA polymerase:</p>
+                <ul>
+                    <li>There is a <span id="inactivationRateText">1%</span> chance of inactivation per cycle.</li>
+                    <li>After <span id="cycleCountText2">30</span> cycles, there is approximately a <span id="failureRateText">26.03%</span> chance that the enzyme becomes inactive at some point during the reaction.</li>
+                    <li>Conversely, there is about a <span id="successRateText">73.97%</span> chance that the enzyme remains functional throughout all <span id="cycleCountText3">30</span> cycles, assuming each cycle's survival is independent.</li>
+                </ul>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="survivalRate">Survival Rate per Cycle:</label>
+                        <input type="range" id="survivalRate" min="0.8" max="0.99" value="0.99" step="0.01">
+                        <span class="value-display" id="survivalRateValue">0.99</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="cycleCount">Number of Cycles:</label>
+                        <input type="range" id="cycleCount" min="1" max="40" value="30" step="1">
+                        <span class="value-display" id="cycleCountValue">30</span>
+                    </div>
+                </div>
+                
+                <div class="result">
+                    <p>Probability of the DNA polymerase remaining active after <span id="cycleCountDisplay">30</span> cycles with a <span id="survivalRateDisplay">0.99</span> survival rate per cycle:</p>
+                    <p class="formula-display" id="pcrResult">0.7397</p>
+                    <p>This means there's approximately a <span id="pcrResultPercent">73.97%</span> chance that the enzyme remains functional throughout all cycles.</p>
+                    <p>Conversely, there's a <span id="pcrFailurePercent">26.03%</span> chance that the enzyme becomes inactive at some point during the reaction.</p>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="pcrChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Conditional Probability</h2>
+            <p>Conditional probability is the probability of an event A occurring given that another event B has occurred, denoted as P(A|B).</p>
+            
+            <div class="formula">
+                <p>Conditional Probability Formula:</p>
+                <div class="formula-display">\(P(A|B) = \frac{P(A \cap B)}{P(B)}\)</div>
+                <p>Where P(B) > 0.</p>
+            </div>
+            
+            <div class="biotech-example">
+                <div class="biotech-example-title">Biotech Application: Disease Testing</div>
+                <p>In a population, 1% of people have a rare genetic disease. A test for the disease has a 95% accuracy rate (5% false positives and 5% false negatives).</p>
+                <p>If a person tests positive, what is the probability they actually have the disease?</p>
+                <p>Let:</p>
+                <ul>
+                    <li>Event A: Person has the disease (P(A) = 0.01)</li>
+                    <li>Event B: Person tests positive</li>
+                    <li>P(B|A) = 0.95 (true positive rate)</li>
+                    <li>P(B|A') = 0.05 (false positive rate)</li>
+                </ul>
+                <p>Using Bayes' Theorem (which we'll cover in more detail in another module):</p>
+                <p>\(P(A|B) = \frac{P(B|A) \times P(A)}{P(B)} = \frac{0.95 \times 0.01}{0.95 \times 0.01 + 0.05 \times 0.99} = \frac{0.0095}{0.059} \approx 0.161\)</p>
+                <p>So there's only about a 16.1% chance that a person who tests positive actually has the disease.</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Probability Distributions</h2>
+            <p>A probability distribution describes the likelihood of obtaining the possible values that a random variable can take.</p>
+            
+            <div class="formula">
+                <p>For a discrete random variable X, the probability mass function (PMF) gives the probability that X takes on a specific value x:</p>
+                <div class="formula-display">\(P(X = x)\)</div>
+            </div>
+            
+            <div class="biotech-example">
+                <div class="biotech-example-title">Biotech Application: Colony Count</div>
+                <p>In microbiology, when counting bacterial colonies on a plate, the number of colonies often follows a Poisson distribution, which is useful for rare events occurring in a fixed interval.</p>
+                <p>The probability mass function for a Poisson distribution is:</p>
+                <div class="formula-display">\(P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}\)</div>
+                <p>Where λ is the average number of colonies per plate and k is the number of colonies observed.</p>
+            </div>
+            
+            <div class="interactive">
+                <h3>Poisson Distribution for Colony Counts</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="lambda">Average Colonies per Plate (λ):</label>
+                        <input type="range" id="lambda" min="1" max="20" value="5" step="0.5">
+                        <span class="value-display" id="lambdaValue">5</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="poissonChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-section">
+            <h2>Quiz: Basic Probability Concepts</h2>
+            <div class="quiz-question">
+                <p><strong>Question 1:</strong> In a cell culture experiment, if the probability of cell survival after treatment with Drug A is 0.7 and the probability of cell survival after treatment with Drug B is 0.6, and these events are independent, what is the probability that a cell will survive after treatment with both drugs?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option">0.13</div>
+                    <div class="quiz-option" data-correct="true">0.42</div>
+                    <div class="quiz-option">0.7</div>
+                    <div class="quiz-option">1.3</div>
+                </div>
+                <button class="quiz-submit">Submit</button>
+                <div class="quiz-feedback"></div>
+                <div class="quiz-explanation">
+                    <p>Since the events are independent, we use the multiplication rule: P(A ∩ B) = P(A) × P(B) = 0.7 × 0.6 = 0.42</p>
+                </div>
+            </div>
+            
+            <div class="quiz-question">
+                <p><strong>Question 2:</strong> In a genetic cross, if the probability of inheriting trait A is 0.5 and the probability of inheriting trait B is 0.5, and these traits are on different chromosomes (independent assortment), what is the probability of inheriting either trait A or trait B?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option">0.25</div>
+                    <div class="quiz-option">0.5</div>
+                    <div class="quiz-option" data-correct="true">0.75</div>
+                    <div class="quiz-option">1.0</div>
+                </div>
+                <button class="quiz-submit">Submit</button>
+                <div class="quiz-feedback"></div>
+                <div class="quiz-explanation">
+                    <p>We use the addition rule for the union of events: P(A ∪ B) = P(A) + P(B) - P(A ∩ B). Since the events are independent, P(A ∩ B) = P(A) × P(B) = 0.5 × 0.5 = 0.25. Therefore, P(A ∪ B) = 0.5 + 0.5 - 0.25 = 0.75</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Poisson Distribution Chart
+        let poissonChart = null;
+        let pcrChart = null;
+        
+        document.getElementById('lambda').addEventListener('input', function() {
+            document.getElementById('lambdaValue').textContent = this.value;
+            updatePoissonChart();
+        });
+        
+        // PCR Survival Rate Interactive
+        document.getElementById('survivalRate').addEventListener('input', function() {
+            document.getElementById('survivalRateValue').textContent = this.value;
+            document.getElementById('survivalRateDisplay').textContent = this.value;
+            updatePCRResults();
+        });
+        
+        document.getElementById('cycleCount').addEventListener('input', function() {
+            document.getElementById('cycleCountValue').textContent = this.value;
+            document.getElementById('cycleCountDisplay').textContent = this.value;
+            updatePCRResults();
+        });
+        
+        function updatePCRResults() {
+            const survivalRate = parseFloat(document.getElementById('survivalRate').value);
+            const cycleCount = parseInt(document.getElementById('cycleCount').value);
+            
+            // Calculate overall probability
+            const overallProbability = Math.pow(survivalRate, cycleCount);
+            const failureProbability = 1 - overallProbability;
+            
+            // Update result display
+            document.getElementById('pcrResult').textContent = overallProbability.toFixed(4);
+            document.getElementById('pcrResultPercent').textContent = (overallProbability * 100).toFixed(2) + '%';
+            document.getElementById('pcrFailurePercent').textContent = (failureProbability * 100).toFixed(2) + '%';
+            
+            // Update dynamic text elements
+            document.getElementById('survivalRateText').textContent = (survivalRate * 100).toFixed(0) + '%';
+            document.getElementById('cycleCountText').textContent = cycleCount;
+            document.getElementById('cycleCountText2').textContent = cycleCount;
+            document.getElementById('cycleCountText3').textContent = cycleCount;
+            document.getElementById('inactivationRateText').textContent = ((1 - survivalRate) * 100).toFixed(0) + '%';
+            document.getElementById('failureRateText').textContent = (failureProbability * 100).toFixed(2) + '%';
+            document.getElementById('successRateText').textContent = (overallProbability * 100).toFixed(2) + '%';
+            
+            // Update formula display with MathJax
+            const formulaText = `\\(${survivalRate.toFixed(2)}^{${cycleCount}} \\approx ${overallProbability.toFixed(4)}\\) or \\(${(overallProbability * 100).toFixed(2)}\\%\\)`;
+            document.getElementById('formulaDisplay').innerHTML = formulaText;
+            
+            // Re-render MathJax
+            if (window.MathJax) {
+                MathJax.typesetPromise([document.getElementById('formulaDisplay')]);
+            }
+            
+            // Update chart
+            updatePCRChart(survivalRate, cycleCount);
+        }
+        
+        function updatePCRChart(survivalRate, cycleCount) {
+            // Calculate probabilities for each cycle
+            const cycleProbabilities = [];
+            for (let i = 1; i <= cycleCount; i++) {
+                const probability = Math.pow(survivalRate, i);
+                cycleProbabilities.push(probability);
+            }
+            
+            const ctx = document.getElementById('pcrChart').getContext('2d');
+            
+            if (pcrChart) {
+                pcrChart.destroy();
+            }
+            
+            pcrChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: cycleCount}, (_, i) => i + 1),
+                    datasets: [{
+                        label: 'Probability of Successful Amplification',
+                        data: cycleProbabilities,
+                        borderColor: 'rgba(52, 152, 219, 1)',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Cycle Number',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: 'Probability',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'PCR Amplification Success Rate Across Cycles',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Cycle ${context.label}: ${(context.raw * 100).toFixed(2)}% success rate`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updatePoissonChart() {
+            const lambda = parseFloat(document.getElementById('lambda').value);
+            
+            // Calculate Poisson probabilities for k = 0 to 20
+            const probabilities = [];
+            for (let k = 0; k <= 20; k++) {
+                const probability = (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+                probabilities.push(probability);
+            }
+            
+            const ctx = document.getElementById('poissonChart').getContext('2d');
+            
+            if (poissonChart) {
+                poissonChart.destroy();
+            }
+            
+            poissonChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({length: 21}, (_, i) => i),
+                    datasets: [{
+                        label: 'Probability',
+                        data: probabilities,
+                        backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                        borderColor: 'rgba(52, 152, 219, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Number of Colonies (k)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Probability P(X = k)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Poisson Distribution for Colony Counts',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `P(X = ${context.label}) = ${context.raw.toFixed(4)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function factorial(n) {
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        }
+        
+        // Quiz functionality
+        document.querySelectorAll('.quiz-question').forEach(question => {
+            const options = question.querySelectorAll('.quiz-option');
+            const submitButton = question.querySelector('.quiz-submit');
+            const feedback = question.querySelector('.quiz-feedback');
+            const explanation = question.querySelector('.quiz-explanation');
+            
+            // Add click event to options
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove selected class from all options
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    // Add selected class to clicked option
+                    option.classList.add('selected');
+                    // Enable submit button
+                    submitButton.disabled = false;
+                });
+            });
+            
+            // Add submit event
+            submitButton.addEventListener('click', () => {
+                const selectedOption = question.querySelector('.quiz-option.selected');
+                
+                if (!selectedOption) return;
+                
+                // Disable all options and submit button
+                options.forEach(opt => opt.style.pointerEvents = 'none');
+                submitButton.disabled = true;
+                
+                // Check if correct
+                const isCorrect = selectedOption.hasAttribute('data-correct');
+                
+                // Add correct/incorrect class to selected option
+                selectedOption.classList.add(isCorrect ? 'correct' : 'incorrect');
+                
+                // If incorrect, highlight the correct option
+                if (!isCorrect) {
+                    const correctOption = question.querySelector('.quiz-option[data-correct="true"]');
+                    correctOption.classList.add('correct');
+                }
+                
+                // Show feedback
+                feedback.textContent = isCorrect ? 'Correct!' : 'Incorrect. Try again!';
+                feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+                
+                // Show explanation
+                explanation.style.display = 'block';
+            });
+        });
+        
+        // Initialize charts
+        updatePoissonChart();
+        updatePCRResults();
+    </script>
+</body>
+</html> 
