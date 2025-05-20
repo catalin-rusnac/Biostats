@@ -57,6 +57,26 @@
         .back-link:hover {
             text-decoration: underline;
         }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+            color: #333;
+        }
+        ol[type="a"] {
+            padding-left: 40px;
+        }
+        ol[type="a"] li {
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -208,6 +228,74 @@
                 <li>Explain the concept of model calibration in LLMs.</li>
                 <li>What is the difference between few-shot and zero-shot learning? How can these approaches inform effective prompt design for LLMs?</li>
                 <li>How does the concept of statistical significance apply to LLM evaluations?</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>R Programming</h2>
+            <ol>
+                <li>Explain the difference between the Console and Script Editor in RStudio.</li>
+                <li>Define and explain the role of the following in R: variables, functions, vectors, matrices, lists, and data frames.</li>
+                <li>What is the purpose of the c() function? Why do you need it when making vectors?</li>
+                <li>What are some basic functions you can apply to numeric vectors? (e.g., mean(), length(), sd())</li>
+                <li>What is a function in R? What are function arguments?</li>
+                <li>How do you call a function? How do you find out what it does and what arguments it accepts?</li>
+                <li>What is a package in R and why are packages useful?</li>
+                <li>What's the difference between installing and loading a package?</li>
+                <li>What is the purpose of the working directory in RStudio, and how do you set or check it using code?</li>
+                <li>Explain how to import a CSV file into a dataframe in R. What common issues might arise during import?</li>
+                <li>Given the following code and output, identify which elements are variables, functions, or arguments. Explain what the code does and interpret the result.
+                    <pre><code>x <- c(5.2, 4.8, 6.1, 5.5, 4.9, 6.3, 5.7, 6.0, 5.8, 5.1)
+t.test(x, mu = 5, alternative = "greater")
+
+# Output
+	One Sample t-test
+
+data:  x
+t = 3.321, df = 9, p-value = 0.0043
+alternative hypothesis: true mean is greater than 5
+95 percent confidence interval:
+ 5.206653      Inf
+sample estimates:
+mean of x 
+     5.54</code></pre>
+                </li>
+                <li>You are given the following code and output:
+                    <pre><code>data(ToothGrowth)  # Load built-in R dataset - length of teeth in guinea pigs based on vitamin C dosage
+
+model <- lm(len ~ dose, data = ToothGrowth)
+
+summary(model)
+
+Call:
+lm(formula = len ~ dose, data = ToothGrowth)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.4496 -2.7406 -0.7452  2.8344 10.1139 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   7.4225     1.2601    5.89 2.06e-07 ***
+dose          9.7636     0.9525   10.25 1.23e-14 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.601 on 58 degrees of freedom
+Multiple R-squared:  0.6443,	Adjusted R-squared:  0.6382 
+F-statistic: 105.1 on 1 and 58 DF,  p-value: 1.233e-14</code></pre>
+                    <p>Explain every element in the code and output.</p>
+                    <ol type="a">
+                        <li>What kind of biological relationship is being modeled? What is the predictor and what is the response variable?</li>
+                        <li>What does the output suggest about the effect of vitamin C dose on tooth growth?</li>
+                        <li>What does the Residuals section tell you and what should you check about the values? How would the residuals look in a biased model?</li>
+                        <li>Interpret the meaning of the coefficient for dose.</li>
+                        <li>What does the intercept mean in this model — biologically and mathematically?</li>
+                        <li>What does Pr(>|t|) mean?</li>
+                        <li>What does the F-statistic p-value tell you about the model?</li>
+                        <li>What does Adjusted R-squared mean? In a linear model with many predictors, how would you use it to check for overfitting?</li>
+                    </ol>
+                </li>
             </ol>
         </div>
 
